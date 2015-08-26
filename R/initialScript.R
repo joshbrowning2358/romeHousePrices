@@ -50,7 +50,13 @@ getPropertyUrls = function(numPages){
 ##'
 
 getPropertyDetails = function(url){
-    htmlCode <- html(url)
+    fail = try({
+        htmlCode = html(url)
+    })
+    if(is(fail, "try-error")){
+        warning("Page could not be read!  Returning NULL.")
+        return(NULL)
+    }
     propertyDetails = html_nodes(htmlCode, "#details td , .dettaglio_superficie")
     mainDetails = gsub("(\n|\t)", "", html_text(propertyDetails[[1]]))
     mainDetails = strsplit(mainDetails, split = "\\|")[[1]]
