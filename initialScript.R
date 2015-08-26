@@ -7,14 +7,15 @@ library(data.table)
 ##' pages.
 ##' 
 ##' @param numPages The number of pages which should be loaded (and 15 urls are 
-##'   generally scraped per page).  If more than the number of pages available 
-##'   (likely something in the ~2000 range), this function will end safely at 
-##'   the last one (with a warning).
+##'   generally scraped per page).
 ##'   
 ##' @return A character vector containing the urls for all the individual
 ##'   listings.
 ##'   
 
+## ENHANCEMENT:   If numPages more than the number of pages available 
+##   (likely something in the ~2000 range), this function should end safely at 
+##   the last one (with a warning).
 getPropertyUrls = function(numPages){
     base = "http://www.immobiliare.it/Roma/vendita_case-Roma.html"
     listingPages = c()
