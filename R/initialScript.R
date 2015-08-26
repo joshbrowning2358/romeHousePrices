@@ -19,14 +19,21 @@ library(data.table)
 getPropertyUrls = function(numPages){
     base = "http://www.immobiliare.it/Roma/vendita_case-Roma.html"
     listingPages = c()
+    errors = 0
     for(i in 1:numPages){
-        ## Make sure i is never in scientific notation
-        url = paste0(base, "?pag=", formatC(i, format = "f", digits = 0))
-        mainHtml <- html(url)
-        newPages = html_nodes(mainHtml, ".annuncio_title a")
-        newPages = sapply(newPages, html_attr, name = "href")
-        listingPages = c(listingPages, newPages)
+        fail = try({
+            ## Make sure i is never in scientific notation
+            url = paste0(base, "?pag=", formatC(i, format = "f", digits = 0))
+            mainHtml <- rvest::html(x = url)
+            newPages = html_nodes(mainHtml, ".annuncio_title a")
+            newPages = sapply(newPages, html_attr, name = "href")
+            listingPages = c(listingPages, newPages)
+        })
+        if(is(fail, "try-error"))
+            errors = errors + 1
     }
+    if(errors > 0)
+        warning("We had", errors, "errors on loading pages.")
     return(listingPages)
 }
 
@@ -72,6 +79,6 @@ getPropertyDetails = function(url){
     return(data)
 }
 
-listingPages = getPropertyUrls(numPages = 10)
-d = lapply(listingPages, getPropertyDetails)
-finalData = rbindlist(d, fill = TRUE)
+# listingPages = getPropertyUrls(numPages = 10)
+# d = lapply(listingPages, getPropertyDetails)
+# finalData = rbindlist(d, fill = TRUE)
