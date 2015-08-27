@@ -13,8 +13,18 @@
 ##'   this dataset.
 ##'
 
+privateUrl = "http://www.mioaffitto.it/affitto_loft_roma/loft-tranquillo-e-immerso-nel-verde_2897096.html"
+agencyUrl = "http://www.mioaffitto.it/affitto_appartamento_roma/appartamento-arredato-con-balcone-eur-laurentino-checchignola-montagnola-fonte-meravigliosa_2844306.html"
+
+
 getPropertyDetailsMioAffitto = function(url){
-    htmlCode <- html(url)
+    fail = try({
+        htmlCode = html(url)
+    })
+    if(is(fail, "try-error")){
+        warning("Page could not be read!  Returning NULL.")
+        return(NULL)
+    }
     propertyDetails = html_nodes(htmlCode, ".margin-bottom-20 li")
     propertyDetails = gsub("- ", "", html_text(propertyDetails))
     mainDetails = html_nodes(htmlCode, ".detail-resume")
@@ -32,6 +42,7 @@ getPropertyDetailsMioAffitto = function(url){
     pictureCount = gsub("(\n| |1/)", "", html_text(pictureCount))
     description = html_text(html_nodes(htmlCode, "h2 , .detail-description span"))
     description = paste(description[[1]], description[[2]])
+    agency = html_nodes(htmlCode, ".detail-agency-info")
     # priceHist = html_attr(html_nodes(htmlCode, "#chart_precios")[[1]], name = "src")
     data = data.table(
         ## Remove all non-numeric characters
@@ -41,7 +52,8 @@ getPropertyDetailsMioAffitto = function(url){
         zona = gsub("(.*Zona: |Quartiere:\n.*)", "", mapDetails),
         quartiere = gsub("(.*Quartiere:\n *|\n *\n *$)", "", mapDetails),
         description = gsub("(\n|\t)", "", description),
-        pictureCount = pictureCount
+        pictureCount = pictureCount,
+        agency = ifelse(length(agency) > 0, TRUE, FALSE)
     )
     ## Split into name/values if applicable, otherwise just name
     propertyDetails = strsplit(propertyDetails, ":")

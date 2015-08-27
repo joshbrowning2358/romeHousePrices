@@ -11,7 +11,13 @@
 ##'
 
 getPropertyDetailsImmobiliare = function(url){
-    htmlCode <- html(url)
+    fail = try({
+        htmlCode = html(url)
+    })
+    if(is(fail, "try-error")){
+        warning("Page could not be read!  Returning NULL.")
+        return(NULL)
+    }
     propertyDetails = html_nodes(htmlCode, "#details td")
     propertyDetails = gsub("(\t|\n|:|\\s$)", "", html_text(propertyDetails))
     mainDetails = html_nodes(htmlCode, ".dettaglio_superficie")
