@@ -1,4 +1,4 @@
-##' Get Property urls
+##' Get Property Urls for Immobiliare
 ##' 
 ##' This function gets the urls for each of the detailed, property listing 
 ##' pages.
@@ -14,7 +14,7 @@
 ##'   listings.
 ##'   
 
-getPropertyUrls = function(numPages, type = "vendita"){
+getPropertyUrlsImmobiliare = function(numPages, type = "vendita"){
     ## Data Quality Checks
     stopifnot(is.numeric(numPages))
     stopifnot(type %in% c("vendita", "affitto"))
@@ -29,7 +29,7 @@ getPropertyUrls = function(numPages, type = "vendita"){
     
     listingPages = c()
     errors = 0
-    totalPages = getNumPages()
+    totalPages = getNumPagesImmobiliare()
     if(numPages > totalPages){
         warning("Only ", totalPages, " pages available!  numPages has been ",
                 "adjusted down.")

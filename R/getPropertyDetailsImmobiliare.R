@@ -1,4 +1,4 @@
-##' Get Property Details
+##' Get Property Details for Immobiliare
 ##' 
 ##' This function takes the url for a listing page and extracts the relevant
 ##' data from it (i.e. square meters, bathrooms, rooms, price, elevator,
@@ -10,7 +10,7 @@
 ##'   this dataset.
 ##'
 
-getPropertyDetails = function(url){
+getPropertyDetailsImmobiliare = function(url){
     htmlCode <- html(url)
     propertyDetails = html_nodes(htmlCode, "#details td")
     propertyDetails = gsub("(\t|\n|:|\\s$)", "", html_text(propertyDetails))
