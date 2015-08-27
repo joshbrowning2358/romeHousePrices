@@ -13,11 +13,20 @@
 getPropertyDetails = function(url){
     htmlCode <- html(url)
     propertyDetails = html_nodes(htmlCode, "#details td")
+    propertyDetails = gsub("(\t|\n|:|\\s$)", "", html_text(propertyDetails))
     mainDetails = html_nodes(htmlCode, ".dettaglio_superficie")
-    mainDetails = gsub("(\n|\t)", "", html_text(propertyDetails[[1]]))
+    mainDetails = gsub("(\n|\t)", "", html_text(mainDetails[[1]]))
     mainDetails = strsplit(mainDetails, split = "\\|")[[1]]
     mapDetails = html_nodes(htmlCode, ".indirizzo_mappa")
     mapDetails = lapply(mapDetails, html_text)
+    pictureCount = html_nodes(htmlCode, "#dettaglio_cont_bigimg")
+    if(length(pictureCount) == 0){
+        pictureCount = 0
+    } else {
+        pictureCount = gsub("(\n|\t|.* di| )", "",
+                            html_text(pictureCount[[1]]))
+    }
+    description = html_text(html_nodes(htmlCode, ".descrizione")[[1]])
     data = data.table(
         ## Remove all non-numeric characters
         superficie = gsub("[^(0-9)]", "", mainDetails[1]),
@@ -26,17 +35,18 @@ getPropertyDetails = function(url){
         prezzio = gsub("[^(0-9)]", "", mainDetails[4]),
         indirizzio = gsub("(\n|\t)", "", mapDetails[1]),
         zona = gsub("(\n|\t)", "", mapDetails[2]),
-        quartiere = gsub("(\n|\t)", "", mapDetails[3])
+        quartiere = gsub("(\n|\t)", "", mapDetails[3]),
+        description = gsub("(\n|\t)", "", description),
+        pictureCount = pictureCount
     )
-    for(i in seq(1, length(propertyDetails)-1, 2)){
-        ## Remove junk characters
-        name = gsub("(\n|\t|:|)", "", html_text(propertyDetails[[i]]))
-        ## Remove trailing spaces
-        name = gsub("\\s$", "", name)
-        ## Convert spaces to periods
-        name = gsub(" ", "\\.", name)
-        value = gsub("(\n|\t)", "", html_text(propertyDetails[[i+1]]))
-        data[, (name) := value]
+    names = propertyDetails[seq(1, length(propertyDetails)-1, 2)]
+    names = gsub(" ", "\\.", names)
+    values = propertyDetails[seq(2, length(propertyDetails), 2)]
+    badNames = names == ""
+    names = names[!badNames]
+    values = values[!badNames]
+    for(i in 1:length(names)){
+        data[, (names[i]) := values[i]]
     }
     return(data)
 }
