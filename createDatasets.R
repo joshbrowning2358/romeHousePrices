@@ -30,14 +30,17 @@ nrow(finalData)
 save(d, file = paste0(workingDir, "/Data/detailImbAff_", time, ".RData"))
 
 ## Small sample, Mio Affitto
-listingPages = getPropertyUrlsMioAffitto(numPages = 10)
-save(listingPages, file = paste0("~/Documents/Github/romeHousePrices/Data/listingPages_", time, ".RData"))
+listingPages = getPropertyUrlsMioAffitto(numPages = 100)
+save(listingPages, file = paste0("~/Documents/Github/romeHousePrices/Data/listingPagesMioAff_", time, ".RData"))
 start = Sys.time()
-d = lapply(listingPages, getPropertyDetails)
+d = lapply(listingPages, getPropertyDetailsMioAffitto)
 finalData = rbindlist(d, fill = TRUE)
 Sys.time() - start
+finalData[!grepl("L' inserzionista ha", indirizzio),
+          c("longitude", "latitude") := as.list(addressToCoord(indirizzio))]
+Sys.time() - start
 nrow(finalData)
-save(d, file = paste0("~/Documents/Github/romeHousePrices/Data/detailData_", time, ".RData"))
+save(d, file = paste0(workingDir, "Data/detailMioAff_", time, ".RData"))
 
 ## Big sample, Immobiliare Vendita
 listingPages = getPropertyUrlsImmobiliare(numPages = 100000)
@@ -51,15 +54,18 @@ save(d, file = paste0(workingDir, "/Data/detailImbVend_", time, ".RData"))
 
 ## Big sample, Mio Affitto
 listingPages = getPropertyUrlsMioAffitto(numPages = 100000)
-save(listingPages, file = paste0("~/Documents/Github/romeHousePrices/Data/listingPages_", time, ".RData"))
+save(listingPages, file = paste0("~/Documents/Github/romeHousePrices/Data/listingPagesMioAff_", time, ".RData"))
 start = Sys.time()
-d = lapply(listingPages, getPropertyDetails)
+d = lapply(listingPages, getPropertyDetailsMioAffitto)
 finalData = rbindlist(d, fill = TRUE)
 Sys.time() - start
+finalData[!grepl("L' inserzionista ha", indirizzio),
+          c("longitude", "latitude") := as.list(addressToCoord(indirizzio))]
+Sys.time() - start
 nrow(finalData)
-save(d, file = paste0("~/Documents/Github/romeHousePrices/Data/detailData_", time, ".RData"))
+save(d, file = paste0("~/Documents/Github/romeHousePrices/Data/detailDataMioAff_", time, ".RData"))
 
-## Small sample, Immobiliare Affitto
+## Big sample, Immobiliare Affitto
 listingPages = getPropertyUrlsImmobiliare(numPages = 100000, type = "affitto")
 save(listingPages, file = paste0("~/Documents/Github/romeHousePrices/Data/listingPagesImbAff_", time, ".RData"))
 start = Sys.time()
