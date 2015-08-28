@@ -30,11 +30,15 @@ nrow(finalData)
 save(d, file = paste0(workingDir, "/Data/detailImbAff_", time, ".RData"))
 
 ## Small sample, Mio Affitto
-listingPages = getPropertyUrlsMioAffitto(numPages = 10)
+listingPages = getPropertyUrlsMioAffitto(numPages = 100)
 save(listingPages, file = paste0("~/Documents/Github/romeHousePrices/Data/listingPages_", time, ".RData"))
 start = Sys.time()
-d = lapply(listingPages, getPropertyDetails)
+d = lapply(listingPages, getPropertyDetailsMioAffitto)
 finalData = rbindlist(d, fill = TRUE)
 Sys.time() - start
+finalData[!grepl("L' inserzionista ha", indirizzio),
+          c("longitude", "latitude") := as.list(addressToCoord(indirizzio))]
+Sys.time() - start
 nrow(finalData)
+
 save(d, file = paste0("~/Documents/Github/romeHousePrices/Data/detailData_", time, ".RData"))
