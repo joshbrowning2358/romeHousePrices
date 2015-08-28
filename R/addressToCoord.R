@@ -9,5 +9,8 @@
 ##' 
 
 addressToCoord = function(address){
-    ggmap::geocode(address, source = "google")
+    out = try(ggmap::geocode(address))
+    if(is(out, "try-error"))
+        return(c(NA, NA))
+    return(out)
 }
