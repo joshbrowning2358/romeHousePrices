@@ -1,11 +1,19 @@
+
+#mark time start script for saving datasets
 time = gsub("(-|:| )", "\\.", Sys.time())
+
+#set wd
 if(Sys.info()[4] == "JOSH_LAPTOP"){
     workingDir = "~/GitHub/romeHousePrices/"
 } else if(Sys.info()[4] == "joshua-Ubuntu-Linux"){
     workingDir = "~/Documents/Github/romeHousePrices"
+} else if(Sys.info()[4] =="Michaels-MBP-2.lan"){
+  workingDir = "~/Dropbox/romeHousePrices/"        #for michael's mac yo
 } else {
     stop("No directory for current user!")
 }
+
+
 files = dir(path = paste0(workingDir, "/R"), full.names = TRUE)
 sapply(files, source)
 
@@ -30,7 +38,7 @@ nrow(finalData)
 save(d, file = paste0(workingDir, "/Data/detailImbAff_", time, ".RData"))
 
 ## Small sample, Mio Affitto
-listingPages = getPropertyUrlsMioAffitto(numPages = 100)
+listingPages = getPropertyUrlsMioAffitto(numPages = 10)
 save(listingPages, file = paste0("~/Documents/Github/romeHousePrices/Data/listingPagesMioAff_", time, ".RData"))
 start = Sys.time()
 d = lapply(listingPages, getPropertyDetailsMioAffitto)
@@ -41,6 +49,19 @@ finalData[!grepl("L' inserzionista ha", indirizzio),
 Sys.time() - start
 nrow(finalData)
 save(d, file = paste0(workingDir, "Data/detailMioAff_", time, ".RData"))
+
+
+
+
+
+## Small sample, casa.it
+listingPages = getPropertyUrlsCasa(numPages = 10) #used super small sample
+save(listingPages, file = paste0(workingDir,"Data/listingPagesCasa_", time, ".RData"))
+start = Sys.time()
+
+
+
+
 
 ## Big sample, Immobiliare Vendita
 listingPages = getPropertyUrlsImmobiliare(numPages = 100000)
