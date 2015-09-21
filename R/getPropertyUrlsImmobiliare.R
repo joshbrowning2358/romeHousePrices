@@ -7,7 +7,7 @@
 ##'   generally scraped per page).  If numPages is more than the number of pages
 ##'   available (likely something in the ~2000 range), this function ends at the
 ##'   last one (with a warning).
-##' @param type One of "vendita" or "affito".  Specifies which types of urls
+##' @param type One of "vendita" or "affitto".  Specifies which types of urls
 ##'   should be scraped.
 ##'   
 ##' @return A character vector containing the urls for all the individual 
