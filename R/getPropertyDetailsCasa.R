@@ -10,7 +10,7 @@
 ##'   this dataset.
 ##'
 
-getPropertyDetailsImmobiliare = function(url){
+getPropertyDetailsCasa = function(url){
     fail = try({
         htmlCode = html(url)
     })
