@@ -1,11 +1,19 @@
+
+#mark time start script for saving datasets
 time = gsub("(-|:| )", "\\.", Sys.time())
+
+#set wd
 if(Sys.info()[4] == "JOSH_LAPTOP"){
     workingDir = "~/GitHub/romeHousePrices/"
 } else if(Sys.info()[4] == "joshua-Ubuntu-Linux"){
     workingDir = "~/Documents/Github/romeHousePrices"
+} else if(Sys.info()[4] =="Michaels-MBP-2.lan"){
+  workingDir = "~/Dropbox/romeHousePrices/"        #for michael's mac yo
 } else {
     stop("No directory for current user!")
 }
+
+
 files = dir(path = paste0(workingDir, "/R"), full.names = TRUE)
 sapply(files, source)
 
@@ -13,7 +21,7 @@ library(data.table)
 library(rvest)
 
 ## Small sample, Immobiliare Vendita
-listingPages = getPropertyUrlsImmobiliare(numPages = 100)
+listingPages = getPropertyUrlsImmobiliare(numPages = 10)
 save(listingPages, file = paste0(workingDir, "/Data/listingPagesImbVend_SMALL_", time, ".RData"))
 start = Sys.time()
 d = lapply(listingPages, getPropertyDetailsImmobiliare)
@@ -23,7 +31,7 @@ nrow(finalData)
 save(finalData, file = paste0(workingDir, "/Data/detailImbVend_SMALL_", time, ".RData"))
 
 ## Small sample, Immobiliare Affitto
-listingPages = getPropertyUrlsImmobiliare(numPages = 100, type = "affitto")
+listingPages = getPropertyUrlsImmobiliare(numPages = 10, type = "affitto")
 save(listingPages, file = paste0(workingDir, "/Data/listingPagesImbAff_SMALL_", time, ".RData"))
 start = Sys.time()
 d = lapply(listingPages, getPropertyDetailsImmobiliare)
@@ -33,7 +41,7 @@ nrow(finalData)
 save(finalData, file = paste0(workingDir, "/Data/detailImbAff_SMALL_", time, ".RData"))
 
 ## Small sample, Mio Affitto
-listingPages = getPropertyUrlsMioAffitto(numPages = 100)
+listingPages = getPropertyUrlsMioAffitto(numPages = 10)
 save(listingPages, file = paste0(workingDir, "/Data/listingPagesMioAff_SMALL_", time, ".RData"))
 start = Sys.time()
 # d = lapply(listingPages, getPropertyDetailsMioAffitto)
@@ -47,6 +55,19 @@ finalData[!grepl("L' inserzionista ha", indirizzio),
 Sys.time() - start
 nrow(finalData)
 save(finalData, file = paste0(workingDir, "Data/detailMioAff_SMALL_", time, ".RData"))
+
+
+
+
+
+## Small sample, casa.it
+listingPages = getPropertyUrlsCasa(numPages = 10) #used super small sample
+save(listingPages, file = paste0(workingDir,"Data/listingPagesCasa_", time, ".RData"))
+start = Sys.time()
+
+
+
+
 
 ## Big sample, Immobiliare Vendita
 listingPages = getPropertyUrlsImmobiliare(numPages = 100000)

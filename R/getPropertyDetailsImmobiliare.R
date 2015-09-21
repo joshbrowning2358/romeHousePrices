@@ -43,7 +43,8 @@ getPropertyDetailsImmobiliare = function(url){
         zona = gsub("(\n|\t)", "", mapDetails[2]),
         quartiere = gsub("(\n|\t)", "", mapDetails[3]),
         description = gsub("(\n|\t)", "", description),
-        pictureCount = pictureCount
+        pictureCount = pictureCount,
+        url = url
     )
     names = propertyDetails[seq(1, length(propertyDetails)-1, 2)]
     names = gsub(" ", "\\.", names)
