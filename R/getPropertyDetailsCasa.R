@@ -55,4 +55,4 @@ getPropertyDetailsImmobiliare = function(url){
 #         data[, (names[i]) := values[i]]
 #     }
 #     return(data)
-# }
+}
