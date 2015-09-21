@@ -20,7 +20,53 @@ getPropertyDetailsCasa = function(url){
     }
     #propertyDetails = html_nodes(htmlCode, "#details td")                      come back!
     #propertyDetails = gsub("(\t|\n|:|\\s$)", "", html_text(propertyDetails))
-    mainDetails = html_nodes(htmlCode, "#features li , #features span")
+    
+    #extract main table
+    mainDetails = html_nodes(htmlCode,"li , #features span")
+    mainDetails = html_text(mainDetails)
+    
+    #price
+    prezzo = html_nodes(htmlCode, ".price")
+    prezzo = html_text(prezzo)
+    
+    #superficie
+    superficie = grepl("^[00-99]+ mq",mainDetails)
+    superficie = mainDetails[superficie]
+    
+    #bagno
+    bagni = grepl("Bagni:", mainDetails)
+    bagni = mainDetails[bagni]
+    
+    #locali
+    locali = grepl("Locali:", mainDetails)
+    locali = mainDetails[locali]
+    
+    
+    #indirizzo
+    indirizzo = html_nodes(htmlCode,".titlecontact , h1")
+    indirizzo = html_text(indirizzo)
+    test = grepl(" in ",indirizzo)
+    indirizzo = indirizzo[!test]
+    
+    #zona
+    zona = html_nodes(htmlCode, "#listing_info .zone")
+    zona = html_text(zona)
+    zona = zona[1]
+    
+    #description
+    descrizione = html_nodes(htmlCode, ".body")
+    descrizione = html_text(descrizione)
+    
+    #condominio
+    condominio = html_nodes(htmlCode,"li:nth-child(6) , li:nth-child(6) span")
+    condominio = html_text(condominio)
+    test <- grepl("Spese Condom",condominio)
+    condominio = condominio[test]
+    
+    
+    
+    mainDetails2 = html_nodes(htmlCode, ".featureList")
+    mainDetails2 = html_text(mainDetails2)
     mainDetails = gsub("(\n|\t)", "", html_text(mainDetails))
 #     mainDetails = strsplit(mainDetails, split = "\\|")[[1]]
 #     mapDetails = html_nodes(htmlCode, ".indirizzo_mappa")
