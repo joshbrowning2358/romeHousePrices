@@ -1,4 +1,3 @@
-
 #mark time start script for saving datasets
 time = gsub("(-|:| )", "\\.", Sys.time())
 
@@ -13,6 +12,9 @@ if(Sys.info()[4] == "JOSH_LAPTOP"){
     stop("No directory for current user!")
 }
 
+## NOTE (FROM JOSH): I'm trying to standardize the file names here.  I'm 
+## thinking listing_(site)_(date).RData or detail_(site)_(date).RData.  Sound
+## good?
 
 files = dir(path = paste0(workingDir, "/R"), full.names = TRUE)
 sapply(files, source)
@@ -22,27 +24,27 @@ library(rvest)
 
 ## Small sample, Immobiliare Vendita
 listingPages = getPropertyUrlsImmobiliare(numPages = 10)
-save(listingPages, file = paste0(workingDir, "/Data/listingPagesImbVend_SMALL_", time, ".RData"))
+save(listingPages, file = paste0(workingDir, "/Data/listing_ImbVend_", time, ".RData"))
 start = Sys.time()
 d = lapply(listingPages, getPropertyDetailsImmobiliare)
 finalData = rbindlist(d, fill = TRUE)
 Sys.time() - start
 nrow(finalData)
-save(finalData, file = paste0(workingDir, "/Data/detailImbVend_SMALL_", time, ".RData"))
+save(finalData, file = paste0(workingDir, "/Data/detail_ImbVend_", time, ".RData"))
 
 ## Small sample, Immobiliare Affitto
 listingPages = getPropertyUrlsImmobiliare(numPages = 10, type = "affitto")
-save(listingPages, file = paste0(workingDir, "/Data/listingPagesImbAff_SMALL_", time, ".RData"))
+save(listingPages, file = paste0(workingDir, "/Data/listing_ImbAff_", time, ".RData"))
 start = Sys.time()
 d = lapply(listingPages, getPropertyDetailsImmobiliare)
 finalData = rbindlist(d, fill = TRUE)
 Sys.time() - start
 nrow(finalData)
-save(finalData, file = paste0(workingDir, "/Data/detailImbAff_SMALL_", time, ".RData"))
+save(finalData, file = paste0(workingDir, "/Data/detail_ImbAff_", time, ".RData"))
 
 ## Small sample, Mio Affitto
 listingPages = getPropertyUrlsMioAffitto(numPages = 10)
-save(listingPages, file = paste0(workingDir, "/Data/listingPagesMioAff_SMALL_", time, ".RData"))
+save(listingPages, file = paste0(workingDir, "/Data/listing_MioAff_", time, ".RData"))
 start = Sys.time()
 # d = lapply(listingPages, getPropertyDetailsMioAffitto)
 d = list()
@@ -54,7 +56,7 @@ finalData[!grepl("L' inserzionista ha", indirizzio),
           c("longitude", "latitude") := as.list(addressToCoord(indirizzio))]
 Sys.time() - start
 nrow(finalData)
-save(finalData, file = paste0(workingDir, "Data/detailMioAff_SMALL_", time, ".RData"))
+save(finalData, file = paste0(workingDir, "Data/detail_Mio_", time, ".RData"))
 
 
 
@@ -62,7 +64,7 @@ save(finalData, file = paste0(workingDir, "Data/detailMioAff_SMALL_", time, ".RD
 
 ## Small sample, casa.it
 listingPages = getPropertyUrlsCasa(numPages = 1) #used super small sample
-save(listingPages, file = paste0(workingDir,"Data/listingPagesCasa_", time, ".RData"))
+save(listingPages, file = paste0(workingDir,"Data/listing_Casa_", time, ".RData"))
 start = Sys.time()
 
 
@@ -71,17 +73,33 @@ start = Sys.time()
 
 ## Big sample, Immobiliare Vendita
 listingPages = getPropertyUrlsImmobiliare(numPages = 100000)
-save(listingPages, file = paste0(workingDir, "/Data/listingPagesImbVend_", time, ".RData"))
+save(listingPages, file = paste0(workingDir, "/Data/listing_ImbVend_", time, ".RData"))
 start = Sys.time()
-d = lapply(listingPages, getPropertyDetailsImmobiliare)
+# d = lapply(listingPages, getPropertyDetailsImmobiliare)
+d = list()
+for(i in 1:length(listingPages))
+    d[[i]] = getPropertyDetailsImmobiliare(listingPages[[i]])
 finalData = rbindlist(d, fill = TRUE)
 Sys.time() - start
 nrow(finalData)
-save(finalData, file = paste0(workingDir, "/Data/detailImbVend_", time, ".RData"))
+save(finalData, file = paste0(workingDir, "/Data/detail_ImbVend_", time, ".RData"))
+
+## Big sample, Immobiliare Affitto
+listingPages = getPropertyUrlsImmobiliare(numPages = 100000, type = "affitto")
+save(listingPages, file = paste0(workingDir, "/Data/listing_ImbAff_", time, ".RData"))
+start = Sys.time()
+# d = lapply(listingPages, getPropertyDetailsImmobiliare)
+d = list()
+for(i in 1:length(listingPages))
+    d[[i]] = getPropertyDetailsImmobiliare(listingPages[[i]])
+finalData = rbindlist(d, fill = TRUE)
+Sys.time() - start
+nrow(finalData)
+save(finalData, file = paste0(workingDir, "/Data/detail_ImbAff_", time, ".RData"))
 
 ## Big sample, Mio Affitto
 listingPages = getPropertyUrlsMioAffitto(numPages = 100000)
-save(listingPages, file = paste0(workingDir, "/Data/listingPagesMioAff_", time, ".RData"))
+save(listingPages, file = paste0(workingDir, "/Data/listing_Mio_", time, ".RData"))
 start = Sys.time()
 # d = lapply(listingPages, getPropertyDetailsMioAffitto)
 d = list()
@@ -96,14 +114,4 @@ finalData[, latitude := addresses[2, ]]
 # finalData[, c("longitude", "latitude") := as.list(addressToCoord(indirizzio))]
 Sys.time() - start
 nrow(finalData)
-save(finalData, file = paste0(workingDir, "/Data/detailDataMioAff_", time, ".RData"))
-
-## Big sample, Immobiliare Affitto
-listingPages = getPropertyUrlsImmobiliare(numPages = 100000, type = "affitto")
-save(listingPages, file = paste0(workingDir, "/Data/listingPagesImbAff_", time, ".RData"))
-start = Sys.time()
-d = lapply(listingPages, getPropertyDetailsImmobiliare)
-finalData = rbindlist(d, fill = TRUE)
-Sys.time() - start
-nrow(finalData)
-save(finalData, file = paste0(workingDir, "/Data/detailImbAff_", time, ".RData"))
+save(finalData, file = paste0(workingDir, "/Data/detail_Mio_", time, ".RData"))

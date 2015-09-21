@@ -1,4 +1,5 @@
 load("~/GitHub/romeHousePrices//Data/detailDataMioAff_2015.09.20.17.23.27.RData")
+load("~/Documents/Github/romeHousePrices//Data/detail_ImbAff_2015.08.27.05.58.13.RData")
 
 finalData = finalData[(Aria.condizionata), ]
 finalData[, roundSuper := round(superficie/25) * 25]

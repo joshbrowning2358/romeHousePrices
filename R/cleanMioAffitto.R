@@ -1,18 +1,3 @@
-library(data.table)
-
-if(Sys.info()[4] == "joshua-Ubuntu-Linux"){
-    dir = "~/Documents/GitHub/romeHousePrices/"
-} else {
-    dir = "~/GitHub/romeHousePrices/"
-}
-
-dataFiles = list.files(paste0(dir, "/Data"))
-mioFiles = dataFiles[grepl("^detailDataMio.*.RData", dataFiles)]
-mioDates = as.POSIXct(gsub("[^0-9]", "", mioFiles), format = "%Y%m%d%H%M%S")
-mioFile = mioFiles[mioDates == max(mioDates)]
-load(paste0(dir, "/Data/", mioFile))
-save(data, file = paste0(dir, "/Data/", mioFile))
-
 ##' Clean Mio Affitto data
 ##' 
 ##' This function cleans up the Mio Affitto data by standardizing columns, 
@@ -21,13 +6,16 @@ save(data, file = paste0(dir, "/Data/", mioFile))
 ##' @param data The Mio Affitto data.table
 ##'   
 ##' @return The same object as passed, but after some data cleaning.
+##' 
 
 cleanMioAffitto = function(data){
+    ## Convert characters to numeric
     data[, superficie := as.numeric(superficie)]
     data[, locali := as.numeric(locali)]
     data[, bagni := as.numeric(bagni)]
     data[, prezzio := as.numeric(prezzio)]
     data[, indirizzio := tolower(indirizzio)]
+
     data[grep("^l' inserzionista ha", indirizzio),
               indirizzio := NA]
     data[, zona := tolower(zona)]
@@ -41,5 +29,8 @@ cleanMioAffitto = function(data){
     data[, quartiere := gsub("/.*", "", quartiere)]
     
     data[, Aria.condizionata := ifelse(is.na(Aria.condizionata), FALSE,
-                                     ifelse(Aria.condizionata == "TRUE", TRUE, FALSE))]
+                                     ifelse(Aria.condizionata == "TRUE",
+                                            TRUE, FALSE))]
+    
+    return(data)
 }
