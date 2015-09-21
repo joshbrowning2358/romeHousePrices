@@ -61,10 +61,40 @@ getPropertyDetailsCasa = function(url){
     condominio = html_nodes(htmlCode,"li:nth-child(6) , li:nth-child(6) span")
     condominio = html_text(condominio)
     test <- grepl("Spese Condom",condominio)
-    condominio = condominio[test]
+    if(sum(test) == 0){
+      condominio = "NA"
+    } else {
+      condominio = condominio[test] 
+    }
+    
+    #agency riferimento
+    riferimento = html_nodes(htmlCode, ".property_id")
+    riferimento = html_text(riferimento)
+    riferimento = gsub("Codice annuncio ","", riferimento)
+    
+    #tipologia
+    tipologia = html_nodes(htmlCode,"ul:nth-child(1) li:nth-child(3)")
+    tipologia = html_text(tipologia)
+    test <- grepl("Tipologia:", tipologia)
+    tipologia <- tipologia[test]
+    tipologia <- gsub("Tipologia:","",tipologia)
+   
+    
+    data = data.table(prezzo = prezzo, 
+                      superficie = superficie,
+                      bagni = bagni,
+                      locali = locali,
+                      indirizzo = indirizzo,
+                      zona = zona,
+                      descrizione = descrizione,
+                      condominio = condominio,
+                      riferimento = riferimento,
+                      tipologia = tipologia)
     
     
+  
     
+    data
     mainDetails2 = html_nodes(htmlCode, ".featureList")
     mainDetails2 = html_text(mainDetails2)
     mainDetails = gsub("(\n|\t)", "", html_text(mainDetails))
