@@ -11,6 +11,8 @@
 ##'
 
 getPropertyDetailsCasa = function(url){
+  
+    #Check to make sure URL works
     fail = try({
         htmlCode = html(url)
     })
@@ -19,7 +21,9 @@ getPropertyDetailsCasa = function(url){
         return(NULL)
     }
     
-    
+    ##########################
+    ## features not in table #
+    ##########################
     #indirizzo
     indirizzo = html_nodes(htmlCode,".titlecontact , h1")
     indirizzo = html_text(indirizzo)
@@ -35,20 +39,14 @@ getPropertyDetailsCasa = function(url){
     descrizione = html_nodes(htmlCode, ".body")
     descrizione = html_text(descrizione)
     
-    #condominio
-    condominio = html_nodes(htmlCode,"li:nth-child(6) , li:nth-child(6) span")
-    condominio = html_text(condominio)
-    test <- grepl("Spese Condom",condominio)
-    if(sum(test) == 0){
-      condominio = "NA"
-    } else {
-      condominio = condominio[test] 
-    }
-    
     #agency riferimento
     riferimento = html_nodes(htmlCode, ".property_id")
     riferimento = html_text(riferimento)
     riferimento = gsub("Codice annuncio ","", riferimento)
+    
+    #price
+    prezzo = html_nodes(htmlCode, ".price")
+    prezzo = html_text(prezzo)
     
     #############################
     #extract features from table#
@@ -71,7 +69,24 @@ getPropertyDetailsCasa = function(url){
     replace <- is.na(values)
     values[replace] <- "TRUE"
     
-    #combined names, values into df and merge w/ features not in table
-  
-
+    #format from table
+    names <- unlist(names)
+    values <- unlist(values)
+    
+    
+    #Create data.table using features not in table
+    data <- data.table(indirizzo = indirizzo,
+                       zona = zona,
+                       riferimento = riferimento,
+                       descrizione = descrizione,
+                       prezzo = prezzo)
+    
+    
+    #Add features contained in table
+    for(i in 1:length(names)){
+      data[, (names[i]) := values[i]]
+    }
+    
+    
+return(data)
 }
