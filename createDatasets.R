@@ -7,7 +7,7 @@ if(Sys.info()[4] == "JOSH_LAPTOP"){
     workingDir = "~/GitHub/romeHousePrices/"
 } else if(Sys.info()[4] == "joshua-Ubuntu-Linux"){
     workingDir = "~/Documents/Github/romeHousePrices"
-} else if(Sys.info()[4] =="Michaels-MBP-2.lan"){
+} else if(Sys.info()[4] =="Michaels-MacBook-Pro-2.local"){
   workingDir = "~/Dropbox/romeHousePrices/"        #for michael's mac yo
 } else {
     stop("No directory for current user!")
@@ -61,7 +61,7 @@ save(finalData, file = paste0(workingDir, "Data/detailMioAff_SMALL_", time, ".RD
 
 
 ## Small sample, casa.it
-listingPages = getPropertyUrlsCasa(numPages = 10) #used super small sample
+listingPages = getPropertyUrlsCasa(numPages = 1) #used super small sample
 save(listingPages, file = paste0(workingDir,"Data/listingPagesCasa_", time, ".RData"))
 start = Sys.time()
 

@@ -51,3 +51,5 @@ NOTE TO JOSH: DUDE, YOU NEED TO USE THE workingDir when you save your listingPag
 #what's w/ the geocodes for mioaffitto?
 
 #michael left off w/ getPropertyDetailsCasa.R
+
+#add url to dataset
