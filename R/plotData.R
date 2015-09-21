@@ -18,10 +18,10 @@ plotData = function(data){
     
     toPlot = copy(finalData)
     toPlot[, prezzio := as.numeric(prezzio)]
-    toPlot[prezzio <= 10, prezzio = NA]
-    
+
     map <- get_map(location = c(lon = 12.5, lat = 41.9), zoom = 12, maptype = 'terrain')
     mapPlot <- ggmap(map) +
-        geom_point(data=finalData, aes(x=longitude, y=latitude,
+        geom_point(data=data, aes(x=longitude, y=latitude,
                                        color=as.numeric(prezzio)))
+    print(mapPlot)
 }

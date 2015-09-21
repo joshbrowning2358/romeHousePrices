@@ -13,10 +13,6 @@
 ##'   this dataset.
 ##'
 
-privateUrl = "http://www.mioaffitto.it/affitto_loft_roma/loft-tranquillo-e-immerso-nel-verde_2897096.html"
-agencyUrl = "http://www.mioaffitto.it/affitto_appartamento_roma/appartamento-arredato-con-balcone-eur-laurentino-checchignola-montagnola-fonte-meravigliosa_2844306.html"
-
-
 getPropertyDetailsMioAffitto = function(url){
     fail = try({
         htmlCode = html(url)
@@ -30,7 +26,8 @@ getPropertyDetailsMioAffitto = function(url){
     mainDetails = html_nodes(htmlCode, ".detail-resume")
     mainDetails = gsub("(\n|\t)", "", html_text(mainDetails[[1]]))
     prezzio = gsub("(\n| )", "", mainDetails)
-    prezzio = gsub("[^0-9].*", "", prezzio)
+    prezzio = gsub("[^0-9\\.].*", "", prezzio)
+    prezzio = gsub("\\.", "", prezzio)
     superficie = gsub("m2.*", "", mainDetails)
     superficie = gsub(".* ", "", superficie)
     locali = gsub(" Loc.*", "", mainDetails)
@@ -40,7 +37,11 @@ getPropertyDetailsMioAffitto = function(url){
     mapDetails = html_text(html_nodes(htmlCode, "address"))
     mapDetails = gsub("^\n[ a-zA-Z:]*\n *", "", mapDetails)
     pictureCount = html_node(htmlCode, ".detail-gallery-count")
-    pictureCount = gsub("(\n| |1/)", "", html_text(pictureCount))
+    if(is.null(pictureCount)){
+        pictureCount = 0
+    } else {
+        pictureCount = gsub("(\n| |1/)", "", html_text(pictureCount))
+    }
     description = html_text(html_nodes(htmlCode, "h2 , .detail-description span"))
     description = paste(description[[1]], description[[2]])
     agency = html_nodes(htmlCode, ".detail-agency-info")
@@ -54,7 +55,8 @@ getPropertyDetailsMioAffitto = function(url){
         quartiere = gsub("(.*Quartiere:\n *|\n *\n *$)", "", mapDetails),
         description = gsub("(\n|\t)", "", description),
         pictureCount = pictureCount,
-        agency = ifelse(length(agency) > 0, TRUE, FALSE)
+        agency = ifelse(length(agency) > 0, TRUE, FALSE),
+        url = url
     )
     ## Split into name/values if applicable, otherwise just name
     propertyDetails = strsplit(propertyDetails, ":")
