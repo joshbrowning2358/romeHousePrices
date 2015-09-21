@@ -1,8 +1,8 @@
  variables for immobiliare.it
- [1] "superficie"           "locali"               "bagni"               
- [4] "prezzio"              "indirizzio"           "zona"                
- [7] "quartiere"            "description"          "pictureCount"        
-[10] "Riferimento.annuncio" "Data.annuncio"        "Tipologia"           
+ [1] "superficie"   x        "locali"     x          "bagni"   x            
+ [4] "prezzio"    x          "indirizzio"  x         "zona"    x            
+ [7] "quartiere"       na     "description"  x        "pictureCount"   na     
+[10] "Riferimento.annuncio”x "Data.annuncio"     NA   "Tipologia" x          
 [13] "Contratto"            "Tipo.proprietà"       "Superficie"          
 [16] "Libero"               "Locali"               "Bagni"               
 [19] "Riscaldamento"        "Cucina"               "Terrazzo"            
@@ -13,43 +13,14 @@
 [34] "Spese.condominiali"   "Classe.immobile"      "Condizionatore"      
 [37] "Spese.aggiuntive"
 
-variables for miaffito
- [1] "superficie"                    "locali"                       
- [3] "bagni"                         "prezzio"                      
- [5] "indirizzio"                    "zona"                         
- [7] "quartiere"                     "description"                  
- [9] "pictureCount"                  "agency"                       
-[11] "Ascensore"                     "Gas.centralizzato"            
-[13] "Aria.condizionata"             "Portiere"                     
-[15] "Ripostiglio.incluso"           "Terrazza"                     
-[17] "Balcone"                       "AntichitÃ."                   
-[19] "Giardino"                      "Arredato"                     
-[21] "Gas.autonomo"                  "DisponibilitÃ.Immediata"      
-[23] "Plaza.de.pÃ¡rking.opcional"    "Animali.permessi"             
-[25] "Orientamento.doppia"           "Certificato.energetico.tipo.G"
-[27] "Accesso.per.disabili"          "Armadi"                       
-[29] "Certificato.energetico.tipo.5" "Forno"                        
-[31] "Attivazione.utenze"            "Certificato.energetico.tipo.7"
-[33] "Telefono"                      "Orientamento.unica"           
-[35] "Certificato.energetico.tipo.1" "Sedie.e.tavoli"               
-[37] "Lavatrice"                     "Frigorifero"                  
-[39] "Lavastoviglie"                 "Utensili.da.cucina"           
-[41] "Zona.infantile"                "Gas.nessuno"                  
-[43] "Ventilatore"                   "TV"                           
-[45] "Piscina"                       "DisponibilitÃ.Non.immediata"  
-[47] "Posto.auto.incluso"            "Certificato.energetico.tipo.8"
-[49] "Orientamento.tripla"     
 
 
-are we trying to capture the exact same features for every website?, or just everything that's on the page?
-
-
-NOTE TO JOSH: DUDE, YOU NEED TO USE THE workingDir when you save your listingPages
-
-###Also, I think you need to add "library(rvest)" to the getPropertyUrlsImm., and "library(data.table)" to getPropertyDetails
-
-#what's w/ the geocodes for mioaffitto?
-
-#michael left off w/ getPropertyDetailsCasa.R
-
-#add url to dataset
+    
+data = data.table(prezzo = prezzo, 
+                      superficie = superficie,
+                      bagni = bagni,
+                      locali = locali,
+                      indirizzo = indirizzo,
+                      zona = zona,
+                      descrizione = descrizione,
+                      condominio = condominio)

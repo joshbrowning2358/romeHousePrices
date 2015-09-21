@@ -63,37 +63,5 @@ getPropertyUrlsCasa = function(numPages, type = "vendita"){
   return(listingPages)
   
 }  
-  
-  #   for(i in 1:numPages){
-  #     fail = try({
-  #       ## Make sure i is never in scientific notation
-  #       url = paste0(base, "?pag=", formatC(i, format = "f", digits = 0))
-  #       mainHtml <- html(url)
-  #       newPages = html_nodes(mainHtml, ".annuncio_title a")
-  #       newPages = sapply(newPages, html_attr, name = "href")
-  #       listingPages = c(listingPages, newPages)
-  #     })
-  #     if(is(fail, "try-error"))
-  #       errors = errors + 1
-  #   }
-  #   if(errors > 0)
-  #     warning("We had", errors, "errors on loading pages.")
-  #   return(listingPages)
-  # }  
-  
-  
-#   for(i in 1:numPages){
-#     ## Make sure i is never in scientific notation
-#     url = paste0(base, formatC(i, format = "f", digits = 0),"?preferredState=laz")
-#     mainHtml <- html(url)
-#     newPages = html_nodes(mainHtml, ".name")
-#     newPages = sapply(newPages, html_attr, name = "href")
-#     newPages = paste0("http://www.casa.it/",newPages)
-#     listingPages = c(newPages,listingPages)
-#   }
-#   
 
   
-  
-return(listingPages)
-}

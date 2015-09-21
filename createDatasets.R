@@ -6,8 +6,9 @@ if(Sys.info()[4] == "JOSH_LAPTOP"){
     workingDir = "~/GitHub/romeHousePrices/"
 } else if(Sys.info()[4] == "joshua-Ubuntu-Linux"){
     workingDir = "~/Documents/Github/romeHousePrices"
-} else if(Sys.info()[4] =="Michaels-MacBook-Pro-2.local"){
-  workingDir = "~/Dropbox/romeHousePrices/"        #for michael's mac yo
+} else if(Sys.info()[4] =="Michaels-MacBook-Pro-2.local"||
+          Sys.info()[4] == "Michaels-MBP-2.lan"){
+    workingDir = "~/Dropbox/romeHousePrices/"        #for michael's mac yo
 } else {
     stop("No directory for current user!")
 }
@@ -59,18 +60,6 @@ nrow(finalData)
 save(finalData, file = paste0(workingDir, "Data/detail_Mio_", time, ".RData"))
 
 
-
-
-
-## Small sample, casa.it
-listingPages = getPropertyUrlsCasa(numPages = 1) #used super small sample
-save(listingPages, file = paste0(workingDir,"Data/listing_Casa_", time, ".RData"))
-start = Sys.time()
-
-
-
-
-
 ## Big sample, Immobiliare Vendita
 listingPages = getPropertyUrlsImmobiliare(numPages = 100000)
 save(listingPages, file = paste0(workingDir, "/Data/listing_ImbVend_", time, ".RData"))
@@ -115,3 +104,18 @@ finalData[, latitude := addresses[2, ]]
 Sys.time() - start
 nrow(finalData)
 save(finalData, file = paste0(workingDir, "/Data/detail_Mio_", time, ".RData"))
+
+
+
+
+
+
+
+
+## Small sample, casa.it
+listingPages = getPropertyUrlsCasa(numPages = 10, type = "affitto")#used super small sample
+save(listingPages, file = paste0(workingDir,"Data/listing_Casa_", time, ".RData"))
+start = Sys.time()
+
+
+
