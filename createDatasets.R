@@ -16,6 +16,10 @@ if(Sys.info()[4] == "JOSH_LAPTOP"){
 ## NOTE (FROM JOSH): I'm trying to standardize the file names here.  I'm 
 ## thinking listing_(site)_(date).RData or detail_(site)_(date).RData.  Sound
 ## good?
+## NOTE (FROM MR): One thing I never really understood, why are we saving the listing urls? They're going
+## to be in the final dataset right? 
+## NOTE 2 (FROM !JOSH): I've been meaning to pay for 1 tb of storage on DB everymonth. How about
+## I just create a shared folder and keep the final data there?
 
 files = dir(path = paste0(workingDir, "/R"), full.names = TRUE)
 sapply(files, source)
@@ -112,10 +116,15 @@ save(finalData, file = paste0(workingDir, "/Data/detail_Mio_", time, ".RData"))
 
 
 
-## Small sample, casa.it
-listingPages = getPropertyUrlsCasa(numPages = 10, type = "affitto")#used super small sample
-save(listingPages, file = paste0(workingDir,"Data/listing_Casa_", time, ".RData"))
+## Small sample, casa.it, in vendita
 start = Sys.time()
-
-
+listingPages = getPropertyUrlsCasa(numPages = 10)#used super small sample
+save(listingPages, file = paste0(workingDir,"Data/listing_Casa_", time, ".RData"))
+d = list()
+for(i in 1:length(listingPages)){
+  d[[i]] = getPropertyDetailsCasa(listingPages[[i]])
+  #print(i)
+}
+finalData = rbindlist(d, fill = TRUE)
+Sys.time() - start
 
