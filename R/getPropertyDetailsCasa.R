@@ -62,8 +62,11 @@ getPropertyDetailsCasa = function(url){
     #remove column names
     col.names <- c("Caratteristiche generali","Caratteristiche interne","Caratteristiche esterne")
     test <- match(col.names,names)
-    names <- names[-test]
-    values <- values[-test]
+    
+    #subset to remove NAs in test
+    test <- test[!is.na(test)]
+    names <- names[-(test)]
+    values <- values[-(test)]
     
     #if a name is present without a value, then value = TRUE, example: ascensore
     replace <- is.na(values)
@@ -88,5 +91,5 @@ getPropertyDetailsCasa = function(url){
     }
     
     
-return(data)
+data
 }
