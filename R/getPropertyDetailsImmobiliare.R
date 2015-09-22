@@ -32,7 +32,9 @@ getPropertyDetailsImmobiliare = function(url){
         pictureCount = gsub("(\n|\t|.* di| )", "",
                             html_text(pictureCount[[1]]))
     }
-    description = html_text(html_nodes(htmlCode, ".descrizione")[[1]])
+    description = try(html_text(html_nodes(htmlCode, ".descrizione")[[1]]))
+    if(is(description, "try-error"))
+        description = ""
     data = data.table(
         ## Remove all non-numeric characters
         superficie = gsub("[^(0-9)]", "", mainDetails[1]),
