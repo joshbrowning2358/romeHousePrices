@@ -49,6 +49,9 @@ ui <- dashboardPage(
             ),
             tabPanel(title = "Mappa",
                      plotOutput("mapPlot", height = 600)
+            ),
+            tabPanel(title = "Superficie",
+                     plotOutput("superficiePlot", height = 600)
             )
 #         box(title = "Summary Statistics",
 #             tableOutput("summaryTable")
