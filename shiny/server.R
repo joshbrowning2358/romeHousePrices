@@ -4,7 +4,7 @@ library(ggplot2)
 library(ggmap)
 
 if(Sys.info()[4] == "joshua-Ubuntu-Linux"){
-    dir = "~/Documents/GitHub/romeHousePrices/"
+    dir = "~/Documents/Github/romeHousePrices/"
 } else {
     dir = "~/GitHub/romeHousePrices/"
 }
