@@ -22,7 +22,7 @@ shinyServer(function(input, output, session) {
 
     ########################## DATA GENERATION ##########################    
     dataFiles = list.files(paste0(dir, "/Data"))
-    mioFiles = dataFiles[grepl("^detailDataMio.*.RData", dataFiles)]
+    mioFiles = dataFiles[grepl("^detail_Mio.*.RData", dataFiles)]
     mioDates = as.POSIXct(gsub("[^0-9]", "", mioFiles), format = "%Y%m%d%H%M%S")
     mioFile = mioFiles[mioDates == max(mioDates)]
     imbFiles = dataFiles[grepl("detail_Imb.*.RData", dataFiles)]
@@ -31,7 +31,8 @@ shinyServer(function(input, output, session) {
     getData = reactive({
         load(paste0(dir, "/Data/", mioFile))
         mioData = copy(finalData)
-        mioData[prezzio < 20, prezzio := prezzio * 1000]
+        mioData = mioData[prezzio >= input$price[1] &
+                          prezzio <= input$price[2], ]
         mioData
     })
 
@@ -67,9 +68,14 @@ shinyServer(function(input, output, session) {
     output$superficiePlot = renderPlot({
         mioData = getData()
         mioData[, superficieLevel := round(superficie/25)*25]
-        ggplot(mioData, aes(x = prezzio, fill = as.factor(superficieLevel))) +
-            geom_bar() +
+        p = ggplot(mioData, aes(x = prezzio, fill = as.factor(superficieLevel))) +
             myTheme
+        if(input$fillBox){
+            p = p + geom_bar(position = "fill")
+        } else {
+            p = p + geom_bar()
+        }
+        p
     })
     
     ########################## TABLE OUTPUTS ##########################
