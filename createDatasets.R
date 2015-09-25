@@ -3,7 +3,7 @@ time = gsub("(-|:| )", "\\.", Sys.time())
 
 #set wd
 if(Sys.info()[4] == "JOSH_LAPTOP"){
-    workingDir = "~/GitHub/romeHousePrices/"
+    workingDir = "C:/Users/rockc_000/Documents/GitHub/romeHousePrices/"
 } else if(Sys.info()[4] == "joshua-Ubuntu-Linux"){
     workingDir = "~/Documents/Github/romeHousePrices"
 } else if(Sys.info()[4] =="Michaels-MacBook-Pro-2.local"||
@@ -69,17 +69,28 @@ start = Sys.time()
 # d = lapply(listingPages, getPropertyDetailsImmobiliare)
 d = list()
 for(i in 1:length(listingPages)){
-    d[[i]] = getPropertyDetailsImmobiliare(listingPages[[i]])
+    d[[i %% 1000]] = getPropertyDetailsImmobiliare(listingPages[[i]])
     ## Save data in chunks to avoid memory issues
     if(i %% 1000 == 0){
         finalData = rbindlist(d, fill = TRUE)
         print(paste0(i, "/", length(listingPages), " runs completed so far"))
         print(Sys.time() - start)
         write.csv(finalData, file = paste0(workingDir, "/Data/detail_ImbVend_",
-                                           i, "_", time, ".RData"))
+                                           i, "_", time, ".csv"),
+                  row.names = FALSE)
         d = list()
     }
 }
+## Paste all .csv files together
+setwd(paste0(workingDir, "Data"))
+systemCommand = paste0("copy detail_ImbVend_*_", time, ".csv detail_ImbVend_",
+                       time, ".csv")
+if(paste0("detail_ImbVend_", time, ".csv") %in% list.files()){
+    stop("File to be created already exists!")
+}
+system2(command = "copy",
+        args = c(paste0("detail_ImbVend_*_", time, ".csv"),
+                 paste0("detail_ImbVend_", time, ".csv")))
 
 ## Big sample, Immobiliare Affitto
 listingPages = getPropertyUrlsImmobiliare(numPages = 100000, type = "affitto")

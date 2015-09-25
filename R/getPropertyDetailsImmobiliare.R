@@ -55,7 +55,11 @@ getPropertyDetailsImmobiliare = function(url){
     names = names[!badNames]
     values = values[!badNames]
     for(i in 1:length(names)){
-        data[, (names[i]) := values[i]]
+        ## Only add the variable if it's not in there already.  Superficie, for
+        ## example, is repeated.
+        if(!tolower(names[i]) %in% colnames(data)){
+            data[, (names[i]) := values[i]]
+        }
     }
     return(data)
 }
