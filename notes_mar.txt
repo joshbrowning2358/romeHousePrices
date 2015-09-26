@@ -4,23 +4,30 @@
  [7] "quartiere"       na     "description"  x        "pictureCount"   na     
 [10] "Riferimento.annuncio”x "Data.annuncio"     NA   "Tipologia" x          
 [13] "Contratto"            "Tipo.proprietà"       "Superficie"          
-[16] "Libero"               "Locali"               "Bagni"               
-[19] "Riscaldamento"        "Cucina"               "Terrazzo"            
-[22] "Balcone"              "Piano"                "Totale.Piani"        
-[25] "Ascensore"            "Posti.Auto"           "Box"                 
-[28] "Giardino"             "Stato"                "Arredamento"         
+[16] "Libero"               "Locali"    x           "Bagni"   x            
+[19] "Riscaldamento" X       "Cucina"               "Terrazzo"   x         
+[22] "Balcone"  x            "Piano"  x              "Totale.Piani"        
+[25] "Ascensore" x           "Posti.Auto"           "Box"                 
+[28] "Giardino"  x           "Stato"                "Arredamento"         
 [31] "Cantina"              "Classe.energetica"    "Terreno.proprietà"   
-[34] "Spese.condominiali"   "Classe.immobile"      "Condizionatore"      
+[34] "Spese.condominiali"   "Classe.immobile"      "Condizionatore"  x    
 [37] "Spese.aggiuntive"
 
 
+ [1] "indirizzo"               "zona"                   
+ [3] "riferimento"             "descrizione"            
+ [5] "prezzo"                  "Categoria"              
+ [7] "Tipologia"               "Bagni"                  
+ [9] "Locali"                  "Anno di costruzione"    
+[11] "Piano"                   "Totale Piani"           
+[13] "Stato al Rogito"         "Condizioni"             
+[15] "Metri quadri"            "Ascensore"              
+[17] "Riscaldamento"           "Box / Posto Auto"       
+[19] "Terrazzo"                "Spese Condominiali Mese"
+[21] "Giardino"                "Balcone"                
+[23] "MQ Giardino"             "MQ Box / Posto Auto"    
+[25] "Unità Immobiliari"      
 
-    
-data = data.table(prezzo = prezzo, 
-                      superficie = superficie,
-                      bagni = bagni,
-                      locali = locali,
-                      indirizzo = indirizzo,
-                      zona = zona,
-                      descrizione = descrizione,
-                      condominio = condominio)
+
+lasso regression
+

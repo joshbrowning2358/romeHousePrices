@@ -118,13 +118,15 @@ save(finalData, file = paste0(workingDir, "/Data/detail_Mio_", time, ".RData"))
 
 ## Small sample, casa.it, in vendita
 start = Sys.time()
-listingPages = getPropertyUrlsCasa(numPages = 10)#used super small sample
+listingPages = getPropertyUrlsCasa(numPages = 100100000)#used super small sample
 save(listingPages, file = paste0(workingDir,"Data/listing_Casa_", time, ".RData"))
+start = Sys.time()
 d = list()
 for(i in 1:length(listingPages)){
   d[[i]] = getPropertyDetailsCasa(listingPages[[i]])
-  #print(i)
+  print(i)
 }
 finalData = rbindlist(d, fill = TRUE)
 Sys.time() - start
-
+nrow(finalData)
+save(finalData, file = paste0(workingDir, "/Data/detail_Mio_", time, ".RData"))
