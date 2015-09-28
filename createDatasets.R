@@ -69,28 +69,33 @@ start = Sys.time()
 # d = lapply(listingPages, getPropertyDetailsImmobiliare)
 d = list()
 for(i in 1:length(listingPages)){
-    d[[i %% 1000]] = getPropertyDetailsImmobiliare(listingPages[[i]])
     ## Save data in chunks to avoid memory issues
     if(i %% 1000 == 0){
+        d[[1000]] = getPropertyDetailsImmobiliare(listingPages[[i]])
         finalData = rbindlist(d, fill = TRUE)
         print(paste0(i, "/", length(listingPages), " runs completed so far"))
         print(Sys.time() - start)
         write.csv(finalData, file = paste0(workingDir, "/Data/detail_ImbVend_",
                                            i, "_", time, ".csv"),
                   row.names = FALSE)
+        rm(d, finalData)
+        gc()
         d = list()
+    } else {
+        d[[i %% 1000]] = getPropertyDetailsImmobiliare(listingPages[[i]])
     }
 }
 ## Paste all .csv files together
 setwd(paste0(workingDir, "Data"))
 systemCommand = paste0("copy detail_ImbVend_*_", time, ".csv detail_ImbVend_",
                        time, ".csv")
+systemCommand = shQuote(systemCommand)
 if(paste0("detail_ImbVend_", time, ".csv") %in% list.files()){
     stop("File to be created already exists!")
 }
-system2(command = "copy",
-        args = c(paste0("detail_ImbVend_*_", time, ".csv"),
-                 paste0("detail_ImbVend_", time, ".csv")))
+## Windows syntax to send the above command to the shell.  This will paste these
+## .csv files together:
+shell(systemCommand)
 
 ## Big sample, Immobiliare Affitto
 listingPages = getPropertyUrlsImmobiliare(numPages = 100000, type = "affitto")
