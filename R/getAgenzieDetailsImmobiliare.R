@@ -53,13 +53,13 @@ getAgenzieDetailsImmobiliare <- function(numPages){
       #convert to numeric
       cap <- as.numeric(cap)
       
-      data.t <- list(names,indirizzi,cap)
+      data.t <- list(names = names,indirizzi = indirizzi,cap = cap)
       
       data[[i]] <- data.t
   }
 
   
-data <- do.call("rbind",data)## NOT CORRECT!
+  finalData = rbindlist(data,fill = TRUE)
       
     
 }

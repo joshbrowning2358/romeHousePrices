@@ -35,4 +35,6 @@ sapply(files, source)
 url = "http://www.immobiliare.it/Roma/agenzie_immobiliari_provincia-Roma.html?pag=1"
 numPages <- getAgenzieNumImmobiliare(url)
 
+agencies <- getAgenzieDetailsImmobiliare(numPages)
+
 ## GET AGENCY DETAILS FROM IMMOBILIARE.IT
