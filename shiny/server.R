@@ -4,30 +4,35 @@ library(ggplot2)
 library(ggmap)
 
 if(Sys.info()[4] == "joshua-Ubuntu-Linux"){
-    dir = "~/Documents/GitHub/romeHousePrices/"
+    dir = "~/Documents/Github/romeHousePrices/"
 } else {
     dir = "~/GitHub/romeHousePrices/"
 }
 
 # Use this to initizialize parameters for testing
-# input = list(conversionRateA = 0.01, conversionRateB = 0.01, trafficA = 10000,
-#         trafficB = 10000, maxTestDays = 365*2, replications = 100,
-#         alphaTrad = .05, alphaSeq = .05, tau = .02)
+# input = list(minObs = 10)
+# getData = function(){
+#     load(paste0(dir, "/Data/", mioFile))
+#     mioData = copy(finalData)
+#     mioData[prezzio < 20, prezzio := prezzio * 1000]
+#     mioData
+# }
 
 shinyServer(function(input, output, session) {
 
     ########################## DATA GENERATION ##########################    
     dataFiles = list.files(paste0(dir, "/Data"))
-    mioFiles = dataFiles[grepl("^detailMio.*.RData", dataFiles)]
+    mioFiles = dataFiles[grepl("^detail_Mio.*.RData", dataFiles)]
     mioDates = as.POSIXct(gsub("[^0-9]", "", mioFiles), format = "%Y%m%d%H%M%S")
-    mioFile = mioFiles[mioDates == min(mioDates)]
-    immobFiles = dataFiles[grepl("^venditaDetail.*.RData", dataFiles)]
-    mioDates = as.POSIXct(gsub("[^0-9]", "", mioFiles), format = "%Y%m%d%H%M%S")
-    mioFile = mioFiles[mioDates == min(mioDates)]
+    mioFile = mioFiles[mioDates == max(mioDates)]
+    imbFiles = dataFiles[grepl("detail_Imb.*.RData", dataFiles)]
+    imbDates = as.POSIXct(gsub("[^0-9]", "", imbFiles), format = "%Y%m%d%H%M%S")
+    imbFile = imbFiles[imbDates == max(imbDates)]
     getData = reactive({
         load(paste0(dir, "/Data/", mioFile))
         mioData = copy(finalData)
-        mioData[prezzio < 20, prezzio := prezzio * 1000]
+        mioData = mioData[prezzio >= input$price[1] &
+                          prezzio <= input$price[2], ]
         mioData
     })
 
@@ -58,6 +63,19 @@ shinyServer(function(input, output, session) {
         p = ggmap(p)
         p + geom_point(data = getData(), aes(x = longitude, y = latitude,
                                            color = prezzio))
+    })
+    
+    output$superficiePlot = renderPlot({
+        mioData = getData()
+        mioData[, superficieLevel := round(superficie/25)*25]
+        p = ggplot(mioData, aes(x = prezzio, fill = as.factor(superficieLevel))) +
+            myTheme
+        if(input$fillBox){
+            p = p + geom_bar(position = "fill")
+        } else {
+            p = p + geom_bar()
+        }
+        p
     })
     
     ########################## TABLE OUTPUTS ##########################

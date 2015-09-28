@@ -11,9 +11,10 @@
 
 addressToCoord = function(address, source = "google"){
     if(is.na(address))
-        return(c(NA, NA))
+        return(data.frame(Longitude = NA, Latitude = NA))
     out = try(ggmap::geocode(address, source = source))
     if(is(out, "try-error"))
-        return(c(NA, NA))
+        return(data.frame(Longitude = NA, Latitude = NA))
+    colnames(out) = c("Longitude", "Latitude")
     return(out)
 }
