@@ -23,7 +23,9 @@ if(Sys.info()[4] == "JOSH_LAPTOP"){
 ## I just create a shared folder and keep the final data there?
 ## RESPONSE (JOSH): Perfect!
 ## Note 3 (FROM MICHAEL): I promise I'll do it. The internet in this damn house isn't 
-## good enough to attempt to scrape. I like your approach to saving the .csv files. 
+## good enough to attempt to scrape from casa.it. Have to mess w/ it Monday.
+## I like your approach to saving the .csv files.
+
 
 files = dir(path = paste0(workingDir, "/R"), full.names = TRUE)
 sapply(files, source)
@@ -75,7 +77,7 @@ for(i in 1:length(listingPages)){
     ## Save data in chunks to avoid memory issues
     if(i %% 1000 == 0){
         finalData = rbindlist(d, fill = TRUE)
-        print(paste0(i, "/", length(listingPages), " runs completed so far"))
+        print(paste0(i, "/", length(listingPages), " runs completed so far")) 
         print(Sys.time() - start)
         write.csv(finalData, file = paste0(workingDir, "/Data/detail_ImbVend_",
                                            i, "_", time, ".csv"),
