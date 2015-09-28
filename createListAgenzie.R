@@ -37,4 +37,11 @@ numPages <- getAgenzieNumImmobiliare(url)
 
 agencies <- getAgenzieDetailsImmobiliare(numPages)
 
-## GET AGENCY DETAILS FROM IMMOBILIARE.IT
+tab <- agencies %>% 
+      group_by(cap) %>% 
+      summarize(length(unique(names)))
+tab <- as.data.frame(tab)
+sum(tab[,2])
+#you can see that some caps aren't in rome, and some are NAs. One way
+#to narrow the list would be to filter for roman caps. i have a list
+#in the old codes for scraping data by cap.
