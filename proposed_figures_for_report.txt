@@ -1,0 +1,12 @@
+#proposed list of figures for report
+# consider two reports? One rental, one vendita?
+
+#area = cap,zona,quartiere whichever we consider most interesting
+
+1. Bar chart by area showing average price per square meter. We should try to restrict the data included in this graph to the 5-10 most important zone/quartiere. We could just this by the # of  units on sales in different areas.
+
+2. Graphs showing number of units for sale/rent in various areas. 
+
+3. Heat map, but more zoomed in than current version. Also, I made the scale scale larger to and adjust the gradient a bit to highlight the difference more. I also assume white is the average? We'll need to make this known somehow. I would also do a version with sale prices. 
+
+
