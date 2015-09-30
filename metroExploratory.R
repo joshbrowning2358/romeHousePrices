@@ -15,7 +15,7 @@ metroB = c('Rebibbia', 'Ponte Mammolo', 'S.M. del Soccorso', 'Pietralata',
            'Piramide', 'Garbatella', 'Basilica S. Paolo', 'Marconi', 'EUR Magliana',
            'EUR Palasport', 'EUR Fermi', 'Laurentina')
 metro = data.table(stopName = c(metroA, metroB))
-address = addressToCoord(paste0(metro$stopName, "metro loc: Rome"))
-metro[, longitude := address$Longitude]
-metro[, latitude := address$Latitude]
+address = sapply(paste0(metro$stopName, " metro Roma"), addressToCoord)
+metro[, longitude := do.call("c", address[1, ])]
+metro[, latitude := do.call("c", address[2, ])]
 save(metro, file = "~/GitHub/romeHousePrices/Data/metroData.RData")

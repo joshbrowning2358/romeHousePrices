@@ -37,6 +37,27 @@ p + geom_point(data = finalData, aes(x = longitude, y = latitude,
     geom_point(data = metro, aes(x = longitude, y = latitude), size = 4,
                color = "red")
 
+library(fields)
+fitData = finalData[!is.na(longitude), ]
+fitData = fitData[longitude >= 12.4 & longitude <= 12.6, ]
+fitData = fitData[latitude >= 41.8 & longitude <= 42, ]
+mod = Krig(x = fitData[, c("longitude", "latitude"), with = FALSE],
+           Y = fitData[, prezzio / superficie])
+grid = expand.grid(longitude = seq(12.4, 12.6, length.out = 80),
+                   latitude = seq(41.8, 42, length.out = 80))
+modPred = predictSurface(mod, grid.list = list(longitude = seq(12.4, 12.6, length.out = 80),
+                                               latitude = seq(41.8, 42, length.out = 80)))
+toPlot = melt(modPred$z)
+toPlot$Var1 = modPred$x[toPlot$Var1]
+toPlot$Var2 = modPred$y[toPlot$Var2]
+colnames(toPlot) = c("longitude", "latitude", "estimate")
+ggsave("~/GitHub/romeHousePrices/heatmap.png",
+p + geom_tile(data = toPlot[!is.na(toPlot$estimate), ],
+              aes(x = longitude, y = latitude, fill = estimate), alpha = 0.5) +
+    scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
+                         midpoint = 20, limit = c(10,30)),
+width = 8, height = 8)
+
 d = read.csv.sql(file = "C:/Users/rockc_000/Documents/GitHub/romeHousePrices/Data/detail_ImbVend_2015.09.23.06.03.15.csv",
                  sql = "select
                             superficie, locali, bagni, prezzio, indirizzio,
