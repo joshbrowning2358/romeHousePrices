@@ -22,6 +22,10 @@ if(Sys.info()[4] == "JOSH_LAPTOP"){
 ## NOTE 2 (FROM !JOSH): I've been meaning to pay for 1 tb of storage on DB everymonth. How about
 ## I just create a shared folder and keep the final data there?
 ## RESPONSE (JOSH): Perfect!
+## Note 3 (FROM MICHAEL): I promise I'll do it. The internet in this damn house isn't 
+## good enough to attempt to scrape from casa.it. Have to mess w/ it Monday.
+## I like your approach to saving the .csv files.
+
 
 files = dir(path = paste0(workingDir, "/R"), full.names = TRUE)
 sapply(files, source)
@@ -73,7 +77,7 @@ for(i in 1:length(listingPages)){
     if(i %% 1000 == 0){
         d[[1000]] = getPropertyDetailsImmobiliare(listingPages[[i]])
         finalData = rbindlist(d, fill = TRUE)
-        print(paste0(i, "/", length(listingPages), " runs completed so far"))
+        print(paste0(i, "/", length(listingPages), " runs completed so far")) 
         print(Sys.time() - start)
         write.csv(finalData, file = paste0(workingDir, "/Data/detail_ImbVend_",
                                            i, "_", time, ".csv"),
@@ -134,16 +138,22 @@ save(finalData, file = paste0(workingDir, "/Data/detail_Mio_", time, ".RData"))
 
 
 
-
-## Small sample, casa.it, in vendita
+## Big sample, Casa. it, vendita
+listingPages = getPropertyUrlsCasa(numPages = 100000)
 start = Sys.time()
-listingPages = getPropertyUrlsCasa(numPages = 10)#used super small sample
-save(listingPages, file = paste0(workingDir,"Data/listing_Casa_", time, ".RData"))
+
 d = list()
 for(i in 1:length(listingPages)){
-  d[[i]] = getPropertyDetailsCasa(listingPages[[i]])
-  #print(i)
+  d[[i %% 1000]] = getPropertyDetailsCasa(listingPages[[i]])
+  ## Save data in chunks to avoid memory issues
+  if(i %% 1000 == 0){
+    finalData = rbindlist(d, fill = TRUE)
+    print(paste0(i, "/", length(listingPages), " runs completed so far"))
+    print(Sys.time() - start)
+    write.csv(finalData, file = paste0(workingDir, "/Data/detail_ImbVend_",
+                                       i, "_", time, ".csv"),
+              row.names = FALSE)
+    d = list()
+  }
 }
-finalData = rbindlist(d, fill = TRUE)
 Sys.time() - start
-
