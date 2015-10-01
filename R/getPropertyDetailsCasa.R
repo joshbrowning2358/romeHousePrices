@@ -36,8 +36,8 @@ getPropertyDetailsCasa = function(url){
     zona = zona[1]
     
     #description
-    descrizione = html_nodes(htmlCode, ".body")
-    descrizione = html_text(descrizione)
+#     descrizione = html_nodes(htmlCode, ".body")
+#     descrizione = html_text(descrizione)
     
     #agency riferimento
     riferimento = html_nodes(htmlCode, ".property_id")
@@ -81,7 +81,7 @@ getPropertyDetailsCasa = function(url){
     data <- data.table(indirizzo = indirizzo,
                        zona = zona,
                        riferimento = riferimento,
-                       descrizione = descrizione,
+                       #descrizione = descrizione,
                        prezzo = prezzo)
     
     
@@ -90,6 +90,7 @@ getPropertyDetailsCasa = function(url){
       data[, (names[i]) := values[i]]
     }
     
+    data$url <- url
     
 data
 }
