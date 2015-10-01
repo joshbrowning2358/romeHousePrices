@@ -8,7 +8,8 @@ if(Sys.info()[4] == "JOSH_LAPTOP"){
     workingDir = "~/Documents/Github/romeHousePrices"
 } else if(Sys.info()[4] =="Michaels-MacBook-Pro-2.local"||
           Sys.info()[4] == "Michaels-MBP-2.lan"){
-    workingDir = "~/Dropbox/romeHousePrices/"        #for michael's mac yo
+    workingDir = "~/Dropbox/romeHousePrices/" 
+    savingDir = "~/DropBox/romeHouseData/" #for michael's mac yo
 } else {
     stop("No directory for current user!")
 }
@@ -139,21 +140,25 @@ save(finalData, file = paste0(workingDir, "/Data/detail_Mio_", time, ".RData"))
 
 
 ## Big sample, Casa. it, vendita
-listingPages = getPropertyUrlsCasa(numPages = 100000)
+listingPages = getPropertyUrlsCasa(numPages = 1)
 start = Sys.time()
-
+# d = lapply(listingPages, getPropertyDetailsCasa)
 d = list()
 for(i in 1:length(listingPages)){
-  d[[i %% 1000]] = getPropertyDetailsCasa(listingPages[[i]])
   ## Save data in chunks to avoid memory issues
   if(i %% 1000 == 0){
+    d[[1000]] = getPropertyDetailsCasa(listingPages[[i]])
     finalData = rbindlist(d, fill = TRUE)
-    print(paste0(i, "/", length(listingPages), " runs completed so far"))
+    print(paste0(i, "/", length(listingPages), " runs completed so far")) 
     print(Sys.time() - start)
-    write.csv(finalData, file = paste0(workingDir, "/Data/detail_ImbVend_",
+    write.csv(finalData, file = paste0(savingDir, "/Data/detail_ImbVend_",
                                        i, "_", time, ".csv"),
               row.names = FALSE)
+    rm(d, finalData)
+    gc()
     d = list()
+  } else {
+    d[[i %% 1000]] = getPropertyDetailsCasa(listingPages[[i]])
   }
 }
-Sys.time() - start
+
