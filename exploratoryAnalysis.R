@@ -43,8 +43,8 @@ fitData = fitData[longitude >= 12.4 & longitude <= 12.6, ]
 fitData = fitData[latitude >= 41.8 & longitude <= 42, ]
 mod = Krig(x = fitData[, c("longitude", "latitude"), with = FALSE],
            Y = fitData[, prezzio / superficie])
-grid = expand.grid(longitude = seq(12.4, 12.6, length.out = 80),
-                   latitude = seq(41.8, 42, length.out = 80))
+grid = expand.grid(longitude = seq(12.4, 12.6, length.out = 40),
+                   latitude = seq(41.8, 42, length.out = 40))
 modPred = predictSurface(mod, grid.list = list(longitude = seq(12.4, 12.6, length.out = 80),
                                                latitude = seq(41.8, 42, length.out = 80)))
 toPlot = melt(modPred$z)
@@ -53,12 +53,33 @@ toPlot$Var2 = modPred$y[toPlot$Var2]
 colnames(toPlot) = c("longitude", "latitude", "estimate")
 ggsave("~/GitHub/romeHousePrices/heatmap.png",
 p + geom_tile(data = toPlot[!is.na(toPlot$estimate), ],
-              aes(x = longitude, y = latitude, fill = estimate), alpha = 0.5) +
-    scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
-                         midpoint = 20, limit = c(10,30)) +
+              aes(x = longitude, y = latitude, fill = estimate), alpha = 0.7) +
+    scale_fill_gradient2(low = "yellow", high = "red",
+                         midpoint = 20, limit = c(10, 30)) +
     geom_text(data = metro, aes(x = longitude, y = latitude, label = "M"),
               size = 5, color = "red"),
 width = 8, height = 8)
+
+ggsave("~/Documents/Github/romeHousePrices/heatmap1.png",
+p + geom_tile(data = toPlot[!is.na(toPlot$estimate), ],
+              aes(x = longitude, y = latitude, fill = estimate), alpha = 0.7) +
+    scale_fill_gradient2(low = "yellow", high = "red",
+                         midpoint = 13.8, limit = c(10, 17.7)) +
+    xlim(c(12.51, 12.6)) + 
+    geom_text(data = metro, aes(x = longitude, y = latitude, label = "M"),
+              size = 5, color = "red"),
+width = 8, height = 8)
+
+ggsave("~/Documents/Github/romeHousePrices/heatmap2.png",
+p + geom_tile(data = toPlot[!is.na(toPlot$estimate), ],
+              aes(x = longitude, y = latitude, fill = estimate), alpha = 0.7) +
+    scale_fill_gradient2(low = "yellow", high = "red",
+                         midpoint = 17, limit = c(12, 21.4)) +
+    ylim(c(41.8, 41.88)) + 
+    geom_text(data = metro, aes(x = longitude, y = latitude, label = "M"),
+              size = 5, color = "red"),
+width = 8, height = 8)
+
 
 d = read.csv.sql(file = "C:/Users/rockc_000/Documents/GitHub/romeHousePrices/Data/detail_ImbVend_2015.09.23.06.03.15.csv",
                  sql = "select
