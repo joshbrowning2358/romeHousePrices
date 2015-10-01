@@ -55,7 +55,9 @@ ggsave("~/GitHub/romeHousePrices/heatmap.png",
 p + geom_tile(data = toPlot[!is.na(toPlot$estimate), ],
               aes(x = longitude, y = latitude, fill = estimate), alpha = 0.5) +
     scale_fill_gradient2(low = "blue", high = "red", mid = "white", 
-                         midpoint = 20, limit = c(10,30)),
+                         midpoint = 20, limit = c(10,30)) +
+    geom_text(data = metro, aes(x = longitude, y = latitude, label = "M"),
+              size = 5, color = "red"),
 width = 8, height = 8)
 
 d = read.csv.sql(file = "C:/Users/rockc_000/Documents/GitHub/romeHousePrices/Data/detail_ImbVend_2015.09.23.06.03.15.csv",
