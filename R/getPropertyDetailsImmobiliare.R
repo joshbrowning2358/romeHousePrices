@@ -12,7 +12,7 @@
 
 getPropertyDetailsImmobiliare = function(url){
     fail = try({
-        htmlCode = html(url)
+        htmlCode = read_html(url)
     })
     if(is(fail, "try-error")){
         warning("Page could not be read!  Returning NULL.")

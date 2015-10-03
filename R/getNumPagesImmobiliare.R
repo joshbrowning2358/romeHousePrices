@@ -10,7 +10,7 @@
 
 getNumPagesImmobiliare = function(){
     url = "http://www.immobiliare.it/Roma/vendita_case-Roma.html"
-    html = html(url)
+    html = read_html(url)
     cast = html_nodes(html, "#pageCount strong:nth-child(2)")
     as.numeric(html_text(cast))
 }

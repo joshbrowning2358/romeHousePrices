@@ -30,7 +30,7 @@ getPropertyUrlsMioAffitto = function(numPages){
         fail = try({
             ## Make sure i is never in scientific notation
             url = paste0(base, "&page=", formatC(i, format = "f", digits = 0))
-            mainHtml <- html(url)
+            mainHtml <- read_html(url)
             newPages = html_nodes(mainHtml, ".property-title")
             newPages = sapply(newPages, html_attr, name = "href")
             listingPages = c(listingPages, newPages)

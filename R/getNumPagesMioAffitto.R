@@ -10,7 +10,7 @@
 
 getNumPagesMioAffitto = function(){
     url = "http://www.mioaffitto.it/search?provincia=77&poblacion=70708"
-    html = html(url)
+    html = read_html(url)
     cast = html_nodes(html, ".property-list-title-count")
     listings = gsub("[^0-9]", "", html_text(cast))
     pages = ceiling(as.numeric(listings) / 15)

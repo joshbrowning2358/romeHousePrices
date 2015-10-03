@@ -48,7 +48,7 @@ getPropertyUrlsCasa = function(numPages, type = "vendita"){
     fail = try({
     ## Make sure i is never in scientific notation
     url = paste0(base, formatC(i, format = "f", digits = 0),"?preferredState=laz")
-    mainHtml <- html(url)
+    mainHtml <- read_html(url)
     newPages = html_nodes(mainHtml, ".name")
     newPages = sapply(newPages, html_attr, name = "href")
     newPages = paste0("http://www.casa.it/",newPages)

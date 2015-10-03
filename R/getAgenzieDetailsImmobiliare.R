@@ -21,7 +21,7 @@ getAgenzieDetailsImmobiliare <- function(numPages){
       url <- paste0(baseUrl,i)
     
       fail = try({
-        htmlCode = html(url)
+        htmlCode = read_html(url)
       })
       
       if(is(fail, "try-error")){

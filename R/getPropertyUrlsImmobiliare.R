@@ -39,7 +39,7 @@ getPropertyUrlsImmobiliare = function(numPages, type = "vendita"){
         fail = try({
             ## Make sure i is never in scientific notation
             url = paste0(base, "?pag=", formatC(i, format = "f", digits = 0))
-            mainHtml <- html(url)
+            mainHtml <- read_html(url)
             newPages = html_nodes(mainHtml, ".annuncio_title a")
             newPages = sapply(newPages, html_attr, name = "href")
             listingPages = c(listingPages, newPages)
