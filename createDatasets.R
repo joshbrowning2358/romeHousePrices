@@ -14,19 +14,6 @@ if(Sys.info()[4] == "JOSH_LAPTOP"){
     stop("No directory for current user!")
 }
 
-## NOTE (FROM JOSH): I'm trying to standardize the file names here.  I'm 
-## thinking listing_(site)_(date).RData or detail_(site)_(date).RData.  Sound
-## good?
-## NOTE (FROM MR): One thing I never really understood, why are we saving the listing urls? They're going
-## to be in the final dataset right?
-## RESPONSE (JOSH): Yeah, we probably don't need them.  Deleting the save calls now :)
-## NOTE 2 (FROM !JOSH): I've been meaning to pay for 1 tb of storage on DB everymonth. How about
-## I just create a shared folder and keep the final data there?
-## RESPONSE (JOSH): Perfect!
-## Note 3 (FROM MICHAEL): I promise I'll do it. The internet in this damn house isn't 
-## good enough to attempt to scrape from casa.it. Have to mess w/ it Monday.
-## I like your approach to saving the .csv files.
-
 files = dir(path = paste0(workingDir, "/R"), full.names = TRUE)
 sapply(files, source)
 
