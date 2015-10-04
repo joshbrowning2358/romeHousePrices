@@ -6,11 +6,15 @@
 ##' 
 ##' @param url The url of the property listing.
 ##' 
-##' @example
+##' @examples
+##' \dontrun{
 ##' getPropertyDetailsMioAffitto("http://www.mioaffitto.it/affitto_appartamento_roma/tiburtina-appartamento-in-affitto_2892995.html")
+##' }
 ##' 
 ##' @return A data.table (with one row) containing the variables available for
 ##'   this dataset.
+##' 
+##' @export
 ##'
 
 getPropertyDetailsMioAffitto = function(url){

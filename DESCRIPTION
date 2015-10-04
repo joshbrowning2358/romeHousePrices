@@ -6,14 +6,15 @@ Date: 2015-10-03
 Authors@R: c(person("Josh", "Browning", role = c("aut", "cre"), email = "joshua.browning@fao.org"),
              person("Michael", "Rahija", role = c("aut", "cre"), email = "michaelaustin.rahija@fao.org"))
 Author: Josh Browning <joshua.browning@fao.org>, Michael Rahija <michaelaustin.rahija>
-Maintainer: Josh Browning <joshua.browning@fao.org>, Michael Rahija <michaelaustin.rahija>
+Maintainer: Josh Browning <joshua.browning@fao.org>
 Description: This package provides all the functions to scrape and analyze Rome housing prices.
 URL: https://github.com/rockclimber112358/romeHousePrices
 License: GPL (>= 3)
 Imports:
 Depends:
     ggplot2 (>= 0.1.0),
-    rvest (0.3.0),
+    ggmap,
+    rvest (>= 0.3.0),
     data.table (>= 1.9.2)
 LazyData: yes
 ZipData: no

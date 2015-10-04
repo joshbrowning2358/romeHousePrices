@@ -7,6 +7,8 @@
 ##'   
 ##' @return A data.table listing the agencies and contact details
 ##'
+##' @export
+##' 
 
 getAgenzieDetailsImmobiliare <- function(numPages){
   

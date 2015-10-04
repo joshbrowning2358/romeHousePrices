@@ -8,6 +8,8 @@
 ##'   
 ##' @return A data.table (with one row) containing the variables available for
 ##'   this dataset.
+##' 
+##' @export
 ##'
 
 getPropertyDetailsCasa = function(url){

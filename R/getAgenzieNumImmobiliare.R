@@ -7,6 +7,8 @@
 ##'   
 ##' @return A one element list with number of pages
 ##'
+##' @export
+##' 
 
 getAgenzieNumImmobiliare <- function(url){
   

@@ -8,6 +8,8 @@
 ##' 
 ##' @return A vector of longitude and latitude values.
 ##' 
+##' @export
+##' 
 
 addressToCoord = function(address, source = "google"){
     if(is.na(address))
