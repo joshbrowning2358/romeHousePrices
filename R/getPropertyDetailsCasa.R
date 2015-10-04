@@ -28,7 +28,16 @@ getPropertyDetailsCasa = function(url){
     indirizzo = html_nodes(htmlCode,".titlecontact , h1")
     indirizzo = html_text(indirizzo)
     test = grepl(" in ",indirizzo)
-    indirizzo = indirizzo[!test]
+      
+      #sometimes, two elements in list have "in", but usually not capital RM
+      if(sum(test) > 1){
+        test = grepl("RM",indirizzo)
+        indirizzo = indirizzo[test]
+        } else if (sum(test) == 1){
+          indirizzo = indirizzo[!test]
+        } else {
+          print(paste0("Error"," ",url, "Not readable"))
+        }
     
     #zona
     zona = html_nodes(htmlCode, "#listing_info .zone")
