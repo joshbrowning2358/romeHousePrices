@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 library(data.table)
 library(ggplot2)
 library(glmnet)
@@ -90,12 +89,6 @@ toPlot = melt(d, id.vars = "prezzio",
                                "Condizionatore", "Totale.Piani", "Ascensore"))
 ggplot(toPlot, aes(x = value, y = prezzio)) + geom_boxplot() +
     facet_wrap( ~ variable, scale = "free")
-=======
-library(data.table)
-library(ggplot2)
-library(glmnet)
-library(sqldf)
-library(reshape2)
 
 load("~/GitHub/romeHousePrices/Data/detail_Mio_2015.09.23.06.45.02.RData")
 
@@ -203,4 +196,3 @@ toPlot = melt(d, id.vars = "prezzio",
                                "Condizionatore", "Totale.Piani", "Ascensore"))
 ggplot(toPlot, aes(x = value, y = prezzio)) + geom_boxplot() +
     facet_wrap( ~ variable, scale = "free")
->>>>>>> 7300a18de81acadf6070800723d41561e3cb1475

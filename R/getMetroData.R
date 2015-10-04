@@ -6,7 +6,6 @@
 ##' 
 ##' @return No file is returned, but the metro station locations are saved to the provided directory.
 ##' 
-##' @export
 ##' 
 
 getMetroData = function(file = "~/../Dropbox/romeHouseData/"){

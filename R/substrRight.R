@@ -4,12 +4,13 @@
 ##' from the right of the string
 ##' Taken from http://stackoverflow.com/questions/7963898/extracting-the-last-n-characters-from-a-string-in-r
 ##'  
-##' @param character vector
+##' @param x character vector
 ##' @param n is the number of characters to extract
 ##'   
 ##' @return the n characters from the right of the string
-
-
+##'
+##' @export
+##' 
 
 
 

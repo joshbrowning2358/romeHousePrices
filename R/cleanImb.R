@@ -7,6 +7,8 @@
 ##'   
 ##' @return The same object as passed, but after some data cleaning.
 ##' 
+##' @export
+##'
 
 # library(data.table)
 # data = read.csv("~/GitHub/romeHousePrices/Data/detail_ImbAff_8000_2015.10.02.22.03.06.csv",
@@ -23,6 +25,7 @@ cleanImb = function(data){
     
     data[, indirizzio := tolower(as.character(indirizzio))]
     data[indirizzio == "roma", indirizzio := NA]
+    data[, indirizzio := gsub("..roma$", " roma", indirizzio)]
     data[, zona := gsub("zona: ", "", tolower(zona))]
     data[, quartiere := gsub("quartiere: ", "", tolower(quartiere))]
     data[, description := as.character(description)]

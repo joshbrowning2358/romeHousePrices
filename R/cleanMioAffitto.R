@@ -6,6 +6,8 @@
 ##' @param data The Mio Affitto data.table
 ##'   
 ##' @return The same object as passed, but after some data cleaning.
+##'
+##' @export
 ##' 
 
 # library(data.table)
@@ -81,8 +83,6 @@ cleanMioAffitto = function(data){
         data[, c(name) := ifelse(is.na(get(name)), FALSE,
                           ifelse(get(name) == "TRUE", TRUE, FALSE))]
     }
-    data[, longitude := ifelse(longitude >= 13 | longitude <= 12, NA, longitude)]
-    data[, latitude := ifelse(latitude >= 43 | latitude <= 41, NA, latitude)]
-    
+
     return(data)
 }

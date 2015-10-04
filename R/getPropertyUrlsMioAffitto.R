@@ -10,7 +10,9 @@
 ##'   
 ##' @return A character vector containing the urls for all the individual 
 ##'   listings.
-##'   
+##' 
+##' @export
+##'
 
 getPropertyUrlsMioAffitto = function(numPages){
     ## Data Quality Checks

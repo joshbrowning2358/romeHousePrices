@@ -7,9 +7,10 @@
 ##' 
 ##' @return No object is returned, but a plot is generated.
 ##' 
+##'
 
-library(ggplot2)
-library(ggmap)
+# library(ggplot2)
+# library(ggmap)
 
 plotData = function(data){
     ## Data Quality Checks

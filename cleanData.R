@@ -1,22 +1,22 @@
 library(data.table)
 
 if(Sys.info()[4] == "joshua-Ubuntu-Linux"){
-    dir = "~/Documents/Github/romeHousePrices/"
+    dir = "~/../Dropbox/romeHouseData/Data/"
 } else {
-    dir = "~/GitHub/romeHousePrices/"
+    dir = "~/../Dropbox/romeHouseData/Data/"
 }
 
-dataFiles = list.files(paste0(dir, "Data"))
-mioFiles = dataFiles[grepl("^detail_Mio.*.RData", dataFiles)]
+dataFiles = list.files(dir, pattern = ".csv")
+mioFiles = dataFiles[grepl("^detail_Mio.*.csv", dataFiles)]
 for(file in mioFiles){
-    load(paste0(dir, "Data/", file))
-    finalData = cleanMioAffitto(finalData)
-    save(finalData, file = paste0(dir, "Data/", file))
+    d = read.csv(paste0(dir, file))
+    d = cleanMioAffitto(data.table(d))
+    write.csv(d, file = paste0(dir, file))
 }
 
-imbFiles = dataFiles[grepl("^detail_Imb.*.RData", dataFiles)]
+imbFiles = dataFiles[grepl("^detail_Imb.*.csv", dataFiles)]
 for(file in imbFiles){
-    load(paste0(dir, "Data/", file))
-    finalData = cleanImb(finalData)
-    save(finalData, file = paste0(dir, "Data/", file))
+    d = read.csv(paste0(dir, file))
+    d = cleanImb(data.table(d))
+    write.csv(d, file = paste0(dir, file))
 }

@@ -1,5 +1,3 @@
-library(rvest)
-
 ##' Get Property urls for Casa.IT in Rome
 ##' 
 ##' This function gets the urls for each of the detailed, property listing 
@@ -7,17 +5,21 @@ library(rvest)
 ##' 
 ##' @param numPages The number of pages which should be loaded (and 15 urls are 
 ##'   generally scraped per page).
+##' @param type A character string, either "vendita" or "affitto", indicating
+##'   which type of urls should be scraped.
 ##'   
-##' @return A character vector containing the urls for all the individual
+##' @return A character vector containing the urls for all the individual 
 ##'   listings.
 ##'   
+##' @export
+##' 
 
 ## ENHANCEMENT:   If numPages more than the number of pages available 
 ##   (likely something in the ~2000 range), this function should end safely at 
 ##   the last one (with a warning).
 #get scrape data from casa.it
 
-
+# library(rvest)
 
 getPropertyUrlsCasa = function(numPages, type = "vendita"){
   

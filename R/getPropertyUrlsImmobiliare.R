@@ -12,7 +12,9 @@
 ##'   
 ##' @return A character vector containing the urls for all the individual 
 ##'   listings.
-##'   
+##'
+##' @export
+##' 
 
 getPropertyUrlsImmobiliare = function(numPages, type = "vendita"){
     ## Data Quality Checks

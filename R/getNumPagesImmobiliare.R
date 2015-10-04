@@ -3,9 +3,9 @@
 ##' This function returns the number of listing pages available on the
 ##' immobiliare house sale site.
 ##' 
-##' @param type 
-##' 
 ##' @return An integer giving the number of pages.
+##' 
+##' @export
 ##'
 
 getNumPagesImmobiliare = function(){

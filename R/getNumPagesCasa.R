@@ -3,10 +3,10 @@
 ##' This function returns the number of listing pages available on the
 ##' casa.it housing sale site.
 ##' 
-##' @param type 
-##' 
 ##' @return An integer giving the number of pages.
 ##'
+##' @export
+##' 
 
 getNumPagesCasa = function(){
   url = "http://www.casa.it/vendita-residenziale/in-roma%2c+rm%2c+lazio/lista-1?preferredState=laz"
