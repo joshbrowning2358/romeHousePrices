@@ -140,3 +140,27 @@ for(i in 1:length(listingPages)){
 #print(i)  
 }
 ## Paste all .csv files together
+
+## Big sample, Casa AFFITTO
+listingPages = getPropertyUrlsCasa(numPages = 10000000, type = "affitto")
+start = Sys.time()
+
+d = list()
+for(i in 1:length(listingPages)){
+  ## Save data in chunks to avoid memory issues
+  if(i %% 1000 == 0){
+    d[[1000]] = getPropertyDetailsCasa(listingPages[[i]])
+    finalData = rbindlist(d, fill = TRUE)
+    print(paste0(i, "/", length(listingPages), " runs completed so far")) 
+    print(Sys.time() - start)
+    write.csv(finalData, file = paste0(savingDir, "/Data/detail_CasaAff_",
+                                       i, "_", time, ".csv"),
+              row.names = FALSE)
+    rm(d, finalData)
+    gc()
+    d = list()
+  } else {
+    d[[i %% 1000]] = getPropertyDetailsCasa(listingPages[[i]])
+  }
+  #print(i)  
+}
