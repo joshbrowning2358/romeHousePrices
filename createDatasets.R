@@ -103,10 +103,10 @@ write.csv(finalData, file = paste0(savingDir, "/detail_Mio_", time, ".csv"),
 
 
 
-## Big sample, Casa. it, vendita
-listingPages = getPropertyUrlsCasa(numPages = 1)
+## Big sample, Casa Vendita
+listingPages = getPropertyUrlsCasa(numPages = 10000000)
 start = Sys.time()
-# d = lapply(listingPages, getPropertyDetailsCasa)
+
 d = list()
 for(i in 1:length(listingPages)){
   ## Save data in chunks to avoid memory issues
@@ -124,8 +124,8 @@ for(i in 1:length(listingPages)){
   } else {
     d[[i %% 1000]] = getPropertyDetailsCasa(listingPages[[i]])
   }
+#print(i)  
 }
-
 
 
 dataFiles = list.files(dir, pattern = ".csv")
@@ -147,4 +147,3 @@ for(file in imbFiles){
         write.csv(d, file = paste0(dir, file))
     }
 }
-
