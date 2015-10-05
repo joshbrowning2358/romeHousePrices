@@ -11,7 +11,7 @@
 ##'
 
 # library(data.table)
-# data = read.csv("~/GitHub/romeHousePrices/Data/detail_ImbAff_8000_2015.10.02.22.03.06.csv",
+# data = read.csv("~/../Dropbox/romeHouseData/Data/detail_ImbVend_2015.10.04.08.49.53.csv",
 #                 stringsAsFactors = FALSE)
 # data = data.table(data)
 
@@ -34,6 +34,17 @@ cleanImb = function(data){
                                     format = "%d/%m/%Y")]
     data[, Tipo.Contratto := as.character(Tipo.Contratto)]
     data[, Tipo.Contratto := substr(Tipo.Contratto, 1, nchar(Tipo.Contratto)-1)]
+    data[Piano == "piano terra", Piano := 0]
+    data[Piano == "ultimo", Piano := Totale.Piani]
+    data[Piano == ">10", Piano := ifelse(as.numeric(Totale.Piani) < 10,
+                                         ## Not top floor, as we may create a
+                                         ## variable piano == total.piani
+                                         as.numeric(Totale.Piani) - 1,
+                                         (as.numeric(Totale.Piani) + 10)/2)]
+    ## Is this logic right/reasonable???
+    data[Piano %in% c("interrato", "seminterrato"), Piano := 0]
+    data[Piano == "piano rialzato", Piano := as.numeric(Totale.Piani) / 2]
+    data[Piano == "su piu' livelli", Piano := as.numeric(Totale.Piani) / 2]
     for(name in c("superficie", "locali", "bagni", "prezzio", "pictureCount",
                   "Piano", "Totale.Piani", "Posti.Auto")){
         data[, c(name) := as.numeric(get(name))]

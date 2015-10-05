@@ -35,14 +35,15 @@ getPropertyDetailsImmobiliare = function(url){
                             html_text(pictureCount[[1]]))
     }
     description = try(html_text(html_nodes(htmlCode, ".descrizione")[[1]]))
-    if(is(description, "try-error"))
+    if(is(description, "try-error")){
         description = ""
+    }
     data = data.table(
         ## Remove all non-numeric characters
-        superficie = gsub("[^(0-9)]", "", mainDetails[1]),
-        locali = gsub("[^(0-9)]", "", mainDetails[2]),
-        bagni = gsub("[^(0-9)]", "", mainDetails[3]),
-        prezzio = gsub("[^(0-9)]", "", mainDetails[4]),
+        superficie = gsub("[^(0-9)]", "", grep("mÂ²", mainDetails, value = TRUE)),
+        locali = gsub("[^(0-9)]", "", grep("locali", mainDetails, value = TRUE)),
+        bagni = gsub("[^(0-9)]", "", grep("bagni", mainDetails, value = TRUE)),
+        prezzo = gsub("[^(0-9)]", "", grep("¬", mainDetails, value = TRUE)),
         indirizzio = gsub("(\n|\t)", "", mapDetails[1]),
         zona = gsub("(\n|\t)", "", mapDetails[2]),
         quartiere = gsub("(\n|\t)", "", mapDetails[3]),

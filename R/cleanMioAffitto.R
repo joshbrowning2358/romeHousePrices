@@ -11,8 +11,8 @@
 ##' 
 
 # library(data.table)
-# load("~/GitHub/romeHousePrices/Data/detail_Mio_2015.09.23.06.45.02.RData")
-# data = copy(finalData)
+# data = read.csv("~/../Dropbox/romeHouseData/Data/detail_Mio_2015.10.03.05.47.59.csv")
+# data = data.table(data)
 
 cleanMioAffitto = function(data){
     ## Convert characters to numeric
