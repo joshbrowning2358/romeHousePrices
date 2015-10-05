@@ -3,7 +3,7 @@ if(Sys.info()[4] == "JOSH_LAPTOP"){
     savingDir <<- "~/../Dropbox/romeHouseData/Data/"
 } else if(Sys.info()[4] == "joshua-Ubuntu-Linux"){
     workingDir <<- "~/Documents/Github/romeHousePrices"
-    stop("Check saving directory for current user!")
+    savingDir <<- "~/Dropbox/romeHouseData/Data/"
 } else if(Sys.info()[4] =="Michaels-MacBook-Pro-2.local"||
           Sys.info()[4] == "Michaels-MBP-2.lan"){
     workingDir <<- "~/Dropbox/romeHousePrices/" 

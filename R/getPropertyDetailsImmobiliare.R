@@ -38,12 +38,13 @@ getPropertyDetailsImmobiliare = function(url){
     if(is(description, "try-error")){
         description = ""
     }
+    euro = "\u20AC" # UTF-8 encoding for euro symbol
     data = data.table(
         ## Remove all non-numeric characters
-        superficie = gsub("[^(0-9)]", "", grep("mÂ²", mainDetails, value = TRUE)),
+        superficie = gsub("[^(0-9)]", "", grep("m.$", mainDetails, value = TRUE)),
         locali = gsub("[^(0-9)]", "", grep("locali", mainDetails, value = TRUE)),
-        bagni = gsub("[^(0-9)]", "", grep("bagni", mainDetails, value = TRUE)),
-        prezzo = gsub("[^(0-9)]", "", grep("¬", mainDetails, value = TRUE)),
+        bagni = gsub("[^(0-9)]", "", grep("bagn(o|i)", mainDetails, value = TRUE)),
+        prezzo = gsub("[^(0-9)]", "", grep(euro, mainDetails, value = TRUE)),
         indirizzio = gsub("(\n|\t)", "", mapDetails[1]),
         zona = gsub("(\n|\t)", "", mapDetails[2]),
         quartiere = gsub("(\n|\t)", "", mapDetails[3]),
