@@ -19,7 +19,7 @@ cleanMioAffitto = function(data){
     data[, superficie := as.numeric(superficie)]
     data[, locali := as.numeric(locali)]
     data[, bagni := as.numeric(bagni)]
-    data[, prezzio := as.numeric(prezzio)]
+    data[, prezzo := as.numeric(prezzo)]
     data[, indirizzio := tolower(indirizzio)]
     data[grep("^l' inserzionista ha", indirizzio),
               indirizzio := NA]

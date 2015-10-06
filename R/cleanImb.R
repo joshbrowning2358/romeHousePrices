@@ -45,7 +45,7 @@ cleanImb = function(data){
     data[Piano %in% c("interrato", "seminterrato"), Piano := 0]
     data[Piano == "piano rialzato", Piano := as.numeric(Totale.Piani) / 2]
     data[Piano == "su piu' livelli", Piano := as.numeric(Totale.Piani) / 2]
-    for(name in c("superficie", "locali", "bagni", "prezzio", "pictureCount",
+    for(name in c("superficie", "locali", "bagni", "prezzo", "pictureCount",
                   "Piano", "Totale.Piani", "Posti.Auto")){
         data[, c(name) := as.numeric(get(name))]
     }

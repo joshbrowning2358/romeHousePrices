@@ -121,22 +121,23 @@ for(i in 1:length(listingPages)){
 }
 
 
-dataFiles = list.files(dir, pattern = ".csv")
+dataFiles = list.files(savingDir, pattern = ".csv")
 mioFiles = dataFiles[grepl("^detail_Mio.*.csv", dataFiles)]
+mioFiles = mioFiles[!grepl("cleaned", mioFiles)]
 for(file in mioFiles){
-    d = read.csv(paste0(dir, file))
+    d = read.csv(paste0(savingDir, file))
     ## Only clean if it hasn't been cleaned yet
-    if(!is.numeric(d$prezzio)){
+    if(!is.numeric(d$prezzo)){
         d = cleanMioAffitto(data.table(d))
-        write.csv(d, file = paste0(dir, gsub(".csv", "_cleaned.csv", file)))
+        write.csv(d, file = paste0(savingDir, gsub(".csv", "_cleaned.csv", file)))
     }
 }
 
 imbFiles = dataFiles[grepl("^detail_Imb.*.csv", dataFiles)]
+imbFiles = imbFiles[!grepl("cleaned", imbFiles)]
 for(file in imbFiles){
-    d = read.csv(paste0(dir, file))
-    if(!is.numeric(d$prezzio)){
-        d = cleanImb(data.table(d))
-        write.csv(d, file = paste0(dir, gsub(".csv", "_cleaned.csv", file)))
-    }
+    d = read.csv(paste0(savingDir, file))
+    d = data.table(d)
+    d = cleanImb(d)
+    write.csv(d, file = paste0(savingDir, gsub(".csv", "_cleaned.csv", file)))
 }
