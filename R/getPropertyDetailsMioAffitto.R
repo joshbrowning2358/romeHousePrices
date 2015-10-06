@@ -53,7 +53,7 @@ getPropertyDetailsMioAffitto = function(url){
     data = data.table(
         ## Remove all non-numeric characters
         superficie = superficie, locali = locali, bagni = bagni,
-        prezzio = prezzio,
+        prezzo = prezzo,
         indirizzio = gsub("\n.*", "", mapDetails),
         zona = gsub("(.*Zona: |Quartiere:\n.*)", "", mapDetails),
         quartiere = gsub("(.*Quartiere:\n *|\n *\n *$)", "", mapDetails),
