@@ -92,7 +92,9 @@ write.csv(finalData, file = paste0(savingDir, "/detail_Mio_", time, ".csv"),
 ## Big sample, Casa Vendita
 start = Sys.time()
 
-listingPages = getPropertyUrlsCasa(numPages = 201)
+urls <- getCasaMainPages(type = "affitto")
+
+listingPages = getPropertyUrlsCasa(numPages = 1)
 listing.time <- Sys.time() - start
 listing.time
 
