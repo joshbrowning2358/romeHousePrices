@@ -14,6 +14,9 @@
 ##' 
 
 getCasaMainPages <- function(type = "vendita"){
+ 
+   ## Data Quality Checks
+  stopifnot(type %in% c("vendita", "affitto"))
   
   if(type == "vendita"){
     
@@ -52,18 +55,18 @@ getCasaMainPages <- function(type = "vendita"){
   house.range <- data.frame(low = as.numeric(low.d),
                             high = as.numeric(high.d))
   
-  #build urls
-  base.urls <- c()
-    
-  for (i in 1:nrow(house.range)){
+  
+  #function to paste together urls
+  build <- function(df){
     url <- paste0(base,
-                  format(house.range[i,1], scientific = FALSE),
-                  "-",
-                  format(house.range[i,2],scientific = FALSE),
-                  end)
-    base.urls <- append(base.urls,url)
-      }  
- 
+           format(df[,1], scientific = FALSE),
+           "-",
+           format(df[,2],scientific = FALSE),
+           end)
+    url
+  }
+  
+  base.urls <- build(house.range)
 
 base.urls    
 
