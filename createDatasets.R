@@ -108,7 +108,7 @@ for(i in 1:length(listingPages)){
     finalData = rbindlist(d, fill = TRUE)
     print(paste0(i, "/", length(listingPages), " runs completed so far")) 
     print(Sys.time() - start)
-    write.csv(finalData, file = paste0(savingDir, "/Data/detail_CasaAff_",
+    write.csv(finalData, file = paste0(savingDir, "/detail_CasaAff_",
                                        i, "_", time, ".csv"),
               row.names = FALSE)
     rm(d, finalData)

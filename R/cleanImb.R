@@ -25,6 +25,11 @@ cleanImb = function(data){
     
     data[, indirizzio := tolower(as.character(indirizzio))]
     data[indirizzio == "roma", indirizzio := NA]
+    data[, indirizzio := gsub(".* in vendita *", "", indirizzio)]
+    data[, indirizzio := gsub(".* in affitto *", "", indirizzio)]
+    data[, indirizzio := gsub("zona .*- ", "", indirizzio)]
+    data[grepl("^zona ", indirizzio), indirizzio := NA_character_]
+    
     data[, indirizzio := gsub("..roma$", " roma", indirizzio)]
     data[, zona := gsub("zona: ", "", tolower(zona))]
     data[, quartiere := gsub("quartiere: ", "", tolower(quartiere))]
