@@ -25,6 +25,11 @@ cleanImb = function(data){
     
     data[, indirizzio := tolower(as.character(indirizzio))]
     data[indirizzio == "roma", indirizzio := NA]
+    data[, indirizzio := gsub(".* in vendita *", "", indirizzio)]
+    data[, indirizzio := gsub(".* in affitto *", "", indirizzio)]
+    data[, indirizzio := gsub("zona .*- ", "", indirizzio)]
+    data[grepl("^zona ", indirizzio), indirizzio := NA_character_]
+    
     data[, indirizzio := gsub("..roma$", " roma", indirizzio)]
     data[, zona := gsub("zona: ", "", tolower(zona))]
     data[, quartiere := gsub("quartiere: ", "", tolower(quartiere))]
@@ -45,7 +50,7 @@ cleanImb = function(data){
     data[Piano %in% c("interrato", "seminterrato"), Piano := 0]
     data[Piano == "piano rialzato", Piano := as.numeric(Totale.Piani) / 2]
     data[Piano == "su piu' livelli", Piano := as.numeric(Totale.Piani) / 2]
-    for(name in c("superficie", "locali", "bagni", "prezzio", "pictureCount",
+    for(name in c("superficie", "locali", "bagni", "prezzo", "pictureCount",
                   "Piano", "Totale.Piani", "Posti.Auto")){
         data[, c(name) := as.numeric(get(name))]
     }

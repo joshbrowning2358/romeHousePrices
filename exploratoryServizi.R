@@ -1,9 +1,15 @@
 library(rvest)
 
 fail = try({
-    htmlCode = read_html("https://www.google.it/maps/search/bar/@41.8787315,12.5139177,14z")
+    htmlCode = read_html("http://www.tripadvisor.com/Restaurants-g187791-Rome_Lazio.html")
 })
-rawText = html_text(htmlCode, "script")
+first = html_node(fail, ".first")
+html_nodes(fail, ".sprite-ratings")
+html_nodes(fail, ".property_title")
+html_text(first)
+html_name(first)
+html_attrs(first)
+
 rawText = gsub(".*cacheResponse", "", rawText)
 rawText = gsub("\n.*", "", rawText)
 rawTextVector = strsplit(rawText, ",")[[1]]
