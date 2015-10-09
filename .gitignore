@@ -1,4 +1,6 @@
-Data
 *.DS_Store
 *.txt
 *.Rapp.Rhistory
+*.Rhistory
+.Rproj.user
+*.Rproj
