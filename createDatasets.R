@@ -141,3 +141,5 @@ for(file in imbFiles){
     d = cleanImb(d)
     write.csv(d, file = paste0(savingDir, gsub(".csv", "_cleaned.csv", file)))
 }
+
+pullNewAddresses()
