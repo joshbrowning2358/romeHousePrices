@@ -14,7 +14,9 @@ pullNewAddresses = function(){
     
     codesRemaining = geocodeQueryCheck(userType = "free")
     datasets = dir(path = savingDir, pattern = "cleaned.RData", full.names = TRUE)
-    addressFile = fread(input = paste0(savingDir, "addressDatabase.csv"))
+    ## Store on github to allow versioning and better conflict resolution
+    ## (github works with .csv)
+    addressFile = fread(input = paste0(workingDir, "/Data/addressDatabase.csv"))
     addressFile[, street := as.character(street)]
     addressFile[, number := as.numeric(number)]
     addressFile[, city := as.character(city)]
@@ -83,7 +85,9 @@ pullNewAddresses = function(){
         if(nrow(newAddresses) > 0){
             addressFile = rbind(addressFile, unique(newAddresses))
         }
-        write.csv(addressFile, file = paste0(savingDir, "addressDatabase.csv"),
+        ## Store on github to allow versioning and better conflict resolution
+        ## (github works with .csv)
+        write.csv(addressFile, file = paste0(workingDir, "/Data/addressDatabase.csv"),
                   row.names = FALSE)
         
         codesRemaining = geocodeQueryCheck(userType = "free")

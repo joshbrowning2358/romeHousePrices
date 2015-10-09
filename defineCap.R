@@ -4,7 +4,7 @@ library(nnet)
 library(randomForest)
 assignDirectory()
 
-address = fread(paste0(savingDir, "/addressDatabase.csv"))
+address = fread(paste0(workingDir, "/Data/addressDatabase.csv"))
 address = address[latitude >= 41.6 & latitude <= 42.2 &
                   longitude >= 12.2 & longitude <= 12.8 &
                   !is.na(CAP), ]
