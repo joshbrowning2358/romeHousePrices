@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document id="root_doc">
+<Schema name="READY" id="READY">
+<SimpleField name="Name" type="string"></SimpleField>
+<SimpleField name="Description" type="string"></SimpleField>
+</Schema>
+<Folder><name>EA boundaries155</name>
+<Placemark>
+<name>155</name>
+<description>155</description>
+<Style><LineStyle><color>ff0000ff</color> <width>1.5</width></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+<Polygon><altitudeMode>relativeToGround</altitudeMode><outerBoundaryIs><LinearRing><altitudeMode>relativeToGround</altitudeMode><coordinates>31.008746,-29.816045 31.00845,-29.814845 31.00842,-29.814488 31.008182,-29.814023 31.008093,-29.813317 31.007479,-29.813321 31.007014,-29.813328 31.007023,-29.813517 31.007018,-29.813787 31.006999,-29.813867 31.007259,-29.813887 31.00739,-29.814149 31.007427,-29.814241 31.007466,-29.814353 31.0075,-29.814482 31.00756,-29.814675 31.007636,-29.814948 31.007725,-29.815254 31.007783,-29.815474 31.007796,-29.815578 31.007799,-29.815745 31.007799,-29.81587 31.007803,-29.816029 31.007818,-29.816131 31.007835,-29.816228 31.007835,-29.816307 31.007832,-29.816376 31.007847,-29.816401 31.007854,-29.816452 31.007857,-29.816488 31.007879,-29.816544 31.007892,-29.816613 31.007898,-29.816629 31.007906,-29.81666 31.007947,-29.816696 31.007973,-29.816746 31.007984,-29.816799 31.00798,-29.816811 31.007982,-29.81684 31.007994,-29.816871 31.008002,-29.816929 31.007996,-29.817003 31.008004,-29.817068 31.008051,-29.817125 31.0081,-29.817189 31.008149,-29.817248 31.008182,-29.817295 31.008258,-29.817387 31.008325,-29.817434 31.008421,-29.817534 31.008489,-29.817602 31.008566,-29.817649 31.008647,-29.817674 31.008689,-29.81757 31.008856,-29.817085 31.009069,-29.816538 31.008746,-29.816045 </coordinates></LinearRing></outerBoundaryIs></Polygon>
+</Placemark>
+
+
+</Folder>
+
+<Folder><name>Households 155</name>
+<Placemark><styleUrl>#icon-503-DB4436</styleUrl><name>15501</name><description><![CDATA[address: 249 isiko rd (DW: 1)]]></description><Point><coordinates>31.0078,-29.81451,0.0</coordinates></Point></Placemark>
+<Placemark><styleUrl>#icon-503-DB4436</styleUrl><name>15502</name><description><![CDATA[address: 295 isiko rd (DW: 1)]]></description><Point><coordinates>31.00833,-29.81451,0.0</coordinates></Point></Placemark>
+</Folder>
+
+<Style id='icon-503-DB4436'><IconStyle><color>ff3644DB</color><scale>1.1</scale><Icon><href>http://www.gstatic.com/mapspro/images/stock/503-wht-blank_maps.png</href></Icon></IconStyle></Style></Document></kml>

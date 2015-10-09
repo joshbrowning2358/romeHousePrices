@@ -2,6 +2,22 @@ library(data.table)
 library(rvest)
 library(romeHousePrices)
 
+if(Sys.info()[4] == "JOSH_LAPTOP"){
+    workingDir = "~/GitHub/romeHousePrices"
+    savingDir = "~/../Dropbox/romeHouseData/"
+} else if(Sys.info()[4] == "joshuaUbuntuLinux"){
+    workingDir = "~/Documents/Github/romeHousePrices"
+} else if(Sys.info()[4] =="Michaels-MacBook-Pro-2.local"||
+          Sys.info()[4] == "Michaels-MBP-2.lan"){
+    workingDir = "~/Dropbox/romeHousePrices/" 
+    savingDir = "~/DropBox/romeHouseData/" #for michael's mac yo
+} else {
+    stop("No directory for current user!")
+}
+
+files = dir(path = paste0(workingDir, "/R"), full.names = TRUE)
+sapply(files, source)
+
 #mark time start script for saving datasets
 time = gsub("(-|:| )", "\\.", Sys.time())
 
@@ -72,8 +88,13 @@ write.csv(finalData, file = paste0(savingDir, "/detail_Mio_", time, ".csv"),
 
 
 ## Big sample, Casa Vendita
-listingPages = getPropertyUrlsCasa(numPages = 10000000)
 start = Sys.time()
+
+urls <- getCasaMainPages(type = "vendita")
+
+listingPages = getPropertyUrlsCasa(numPages = 1)
+listing.time <- Sys.time() - start
+listing.time
 
 d = list()
 for(i in 1:length(listingPages)){
@@ -83,7 +104,7 @@ for(i in 1:length(listingPages)){
     finalData = rbindlist(d, fill = TRUE)
     print(paste0(i, "/", length(listingPages), " runs completed so far")) 
     print(Sys.time() - start)
-    write.csv(finalData, file = paste0(savingDir, "/detail_ImbVend_",
+    write.csv(finalData, file = paste0(savingDir, "/detail_ImbCasa_",
                                        i, "_", time, ".csv"),
               row.names = FALSE)
     rm(d, finalData)
@@ -94,10 +115,14 @@ for(i in 1:length(listingPages)){
   }
 #print(i)  
 }
+
+harvesting.time <- Sys.time() - start
+harvesting.time
+
 ## Paste all .csv files together
 
 ## Big sample, Casa AFFITTO
-listingPages = getPropertyUrlsCasa(numPages = 10000000, type = "affitto")
+listingPages = getPropertyUrlsCasa(numPages = 1, type = "affitto")
 start = Sys.time()
 
 d = list()
@@ -126,11 +151,9 @@ mioFiles = dataFiles[grepl("^detail_Mio.*.csv", dataFiles)]
 mioFiles = mioFiles[!grepl("cleaned", mioFiles)]
 for(file in mioFiles){
     d = read.csv(paste0(savingDir, file))
-    ## Only clean if it hasn't been cleaned yet
-    if(!is.numeric(d$prezzo)){
-        d = cleanMioAffitto(data.table(d))
-        write.csv(d, file = paste0(savingDir, gsub(".csv", "_cleaned.csv", file)))
-    }
+    d = data.table(d)
+    d = cleanMioAffitto(d)
+    save(d, file = paste0(savingDir, gsub(".csv", "_cleaned.RData", file)))
 }
 
 imbFiles = dataFiles[grepl("^detail_Imb.*.csv", dataFiles)]
@@ -139,7 +162,7 @@ for(file in imbFiles){
     d = read.csv(paste0(savingDir, file))
     d = data.table(d)
     d = cleanImb(d)
-    write.csv(d, file = paste0(savingDir, gsub(".csv", "_cleaned.csv", file)))
+    save(d, file = paste0(savingDir, gsub(".csv", "_cleaned.RData", file)))
 }
 
 pullNewAddresses()

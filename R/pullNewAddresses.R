@@ -13,7 +13,7 @@ pullNewAddresses = function(){
     assignDirectory()
     
     codesRemaining = geocodeQueryCheck(userType = "free")
-    datasets = dir(path = savingDir, pattern = "cleaned.csv", full.names = TRUE)
+    datasets = dir(path = savingDir, pattern = "cleaned.RData", full.names = TRUE)
     addressFile = fread(input = paste0(savingDir, "addressDatabase.csv"))
     addressFile[, street := as.character(street)]
     addressFile[, number := as.numeric(number)]
@@ -21,12 +21,15 @@ pullNewAddresses = function(){
     
     i = 1
     while(codesRemaining > 0 & i <= length(datasets)){
-        d = read.csv(datasets[i], stringsAsFactors = FALSE)
+        load(datasets[i])
         if(!"latitude" %in% colnames(d)){
-            d$latitude = NA
+            d[, latitude := NA_real_]
         }
         if(!"longitude" %in% colnames(d)){
-            d$longitude = NA
+            d[, longitude := NA_real_]
+        }
+        if(!"CAP" %in% colnames(d)){
+            d[, CAP := NA_character_]
         }
         indices = which(!is.na(d$indirizzio) & is.na(d$longitude))
         newAddresses = as.character(d$indirizzio[indices])
@@ -37,7 +40,7 @@ pullNewAddresses = function(){
             number = stringr::str_extract(pattern = "[0-9]*$",
                                           string = newAddresses),
             city = "roma", latitude = NA_real_, longitude = NA_real_,
-            index = indices)
+            CAP = NA_character_, index = indices)
         newAddresses[, street := gsub(", *$", "", street)]
         newAddresses[, number := as.numeric(number)]
         
@@ -45,12 +48,13 @@ pullNewAddresses = function(){
         newAddresses = merge(newAddresses, addressFile,
                              by = c("street", "number", "city"),
                              all.x = TRUE, suffixes = c(".old", ""))
-        newAddresses[, c("latitude.old", "longitude.old") := NULL]
+        newAddresses[, c("latitude.old", "longitude.old", "CAP.old") := NULL]
         
         ## If latitude and longitude are not missing now, add back to d
         fromFile = newAddresses[!is.na(latitude), ]
-        d$latitude[fromFile$index] = fromFile$latitude
-        d$longitude[fromFile$index] = fromFile$longitude
+        d[fromFile$index, latitude := fromFile$latitude]
+        d[fromFile$index, longitude := fromFile$longitude]
+        d[fromFile$index, CAP := fromFile$CAP]
         newAddresses = newAddresses[is.na(latitude), ]
         newAddresses = newAddresses[!is.na(street), ]
         
@@ -61,19 +65,24 @@ pullNewAddresses = function(){
         ## Force latitude/longitude to NA real instead of NA logical so that we
         ## don't have type problems with data.table.
         newAddresses[, c("latitude", "longitude") := rep(NA_real_, .N)]
+        newAddresses[, CAP := rep(NA_character_, .N)]
         fullAddress = newAddresses[, paste(street, ifelse(is.na(number), "", number), city)]
         coords = lapply(fullAddress, addressToCoord, source = "google")
         coords = do.call(rbind, coords)
         stopifnot(nrow(coords) == nrow(newAddresses))
-        newAddresses[, latitude := coords$Latitude]
-        newAddresses[, longitude := coords$Longitude]
+        newAddresses[, latitude := coords$latitude]
+        newAddresses[, longitude := coords$longitude]
+        newAddresses[, CAP := as.character(coords$CAP)]
         
         ## Add newly found addresses back to d and to address database
-        d$latitude[newAddresses$index] = newAddresses$latitude
-        d$longitude[newAddresses$index] = newAddresses$longitude
-        write.csv(d, file = datasets[i], row.names = FALSE)
+        d[newAddresses$index, latitude := newAddresses$latitude]
+        d[newAddresses$index, longitude := newAddresses$longitude]
+        d[newAddresses$index, CAP := newAddresses$CAP]
+        save(d, file = datasets[i])
         newAddresses[, index := NULL]
-        addressFile = rbind(addressFile, unique(newAddresses))
+        if(nrow(newAddresses) > 0){
+            addressFile = rbind(addressFile, unique(newAddresses))
+        }
         write.csv(addressFile, file = paste0(savingDir, "addressDatabase.csv"),
                   row.names = FALSE)
         

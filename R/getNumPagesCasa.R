@@ -16,5 +16,5 @@ getNumPagesCasa = function(){
   castNew = gsub(".*[0-9] di ", "", cast)
   castNew = gsub(" [A-Za-z ]+","",castNew)
   
-  as.numeric(castNew)
+ceiling(as.numeric(castNew)/20)
 }

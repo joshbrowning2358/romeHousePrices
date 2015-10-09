@@ -2,3 +2,5 @@ README.md
 .git
 Data
 shiny
+^.*\.Rproj$
+^\.Rproj\.user$
