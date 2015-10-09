@@ -80,7 +80,9 @@ pullNewAddresses = function(){
         d[newAddresses$index, CAP := newAddresses$CAP]
         save(d, file = datasets[i])
         newAddresses[, index := NULL]
-        addressFile = rbind(addressFile, unique(newAddresses))
+        if(nrow(newAddresses) > 0){
+            addressFile = rbind(addressFile, unique(newAddresses))
+        }
         write.csv(addressFile, file = paste0(savingDir, "addressDatabase.csv"),
                   row.names = FALSE)
         

@@ -23,6 +23,7 @@ model = randomForest(x = address[, c("latitude", "longitude"), with = FALSE],
 mean(predict(model) == address[, CAP])
 table(predict(model), address[, CAP])
 
-res = 1000
+res = 100
 grid = expand.grid(latitude  = seq(41.6, 42.2, length.out = res),
                    longitude = seq(12.2, 12.8, length.out = res))
+grid$CAP = predict(model, newdata = grid)
