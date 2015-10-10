@@ -29,6 +29,12 @@ cleanImb = function(data){
     data[, indirizzio := gsub(".* in affitto *", "", indirizzio)]
     data[, indirizzio := gsub("zona .*- ", "", indirizzio)]
     data[grepl("^zona ", indirizzio), indirizzio := NA_character_]
+    ## Couldn't find a better way to remove "a hat", which is encoded here as e2
+    data[, indirizzio := sapply(indirizzio, function(x){
+        out = charToRaw(x)
+        out = out[out != "e2"]
+        out = rawToChar(out)
+    })]
     
     data[, indirizzio := gsub("..roma$", " roma", indirizzio)]
     data[, zona := gsub("zona: ", "", tolower(zona))]
