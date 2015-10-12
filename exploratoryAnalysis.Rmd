@@ -1,0 +1,30 @@
+---
+title: "Exploratory Analysis"
+author: "Josh Browning"
+date: "October 11, 2015"
+output: pdf_document
+---
+
+```{r}
+library(data.table)
+library(ggplot2)
+library(scales)
+library(glmnet)
+library(sqldf)
+library(reshape2)
+library(romeHousePrices)
+
+assignDirectory()
+
+load(paste0(savingDir, "/detail_Mio_2015.10.05.06.28.32_cleaned.RData"))
+finalData = d
+```
+
+```{r, echo=FALSE, fig=TRUE}
+finalData[, roundSuper := round(superficie/25) * 25]
+print(ggplot(finalData, aes(x = prezzo, fill = factor(roundSuper))) +
+    geom_bar(position = "fill") +
+    xlim(c(0,3001)) + labs(y = "", fill = "superficio") +
+    scale_y_continuous(labels = percent))
+```
+

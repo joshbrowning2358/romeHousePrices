@@ -49,6 +49,7 @@ pullNewAddresses = function(){
             CAP = NA_character_, index = indices)
         newAddresses[, street := gsub(", *$", "", street)]
         newAddresses[, number := as.numeric(number)]
+        newAddresses = cleanAddressFile(newAddresses, deleteRows = FALSE)
         
         ## Update new addresses with any already on file
         newAddresses = merge(newAddresses, addressFile,
@@ -93,6 +94,7 @@ pullNewAddresses = function(){
         if(nrow(newAddresses) > 0){
             addressFile = rbind(addressFile, unique(newAddresses))
             addressFile = addressFile[!is.na(latitude), ]
+            addressFile = cleanAddressFile(addressFile, deleteRows = TRUE)
         }
         ## Store on github to allow versioning and better conflict resolution
         ## (github works with .csv)
