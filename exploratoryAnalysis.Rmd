@@ -2,10 +2,13 @@
 title: "Exploratory Analysis"
 author: "Josh Browning"
 date: "October 11, 2015"
-output: pdf_document
+output: html_document
 ---
 
+Load the libraries and the Mio Affitto dataset:
+
 ```{r}
+suppressMessages({
 library(data.table)
 library(ggplot2)
 library(scales)
@@ -13,18 +16,128 @@ library(glmnet)
 library(sqldf)
 library(reshape2)
 library(romeHousePrices)
+})
 
 assignDirectory()
 
 load(paste0(savingDir, "/detail_Mio_2015.10.05.06.28.32_cleaned.RData"))
-finalData = d
+
+## When filtering to top zones, quartieres, etc. how many should be kept?
+maxToPlot = 10
 ```
 
-```{r, echo=FALSE, fig=TRUE}
-finalData[, roundSuper := round(superficie/25) * 25]
-print(ggplot(finalData, aes(x = prezzo, fill = factor(roundSuper))) +
+Set some options:
+
+```{r}
+## Keep data.table from printing all the time
+assign("depthtrigger", 100, data.table:::.global)
+```
+
+## Prezzo vs. Superficie
+
+```{r, fig=TRUE}
+d[, roundSuper := round(superficie/25) * 25]
+print(ggplot(d, aes(x = prezzo, fill = factor(roundSuper))) +
     geom_bar(position = "fill") +
     xlim(c(0,3001)) + labs(y = "", fill = "superficio") +
     scale_y_continuous(labels = percent))
 ```
 
+
+## Exploring the model
+
+### Locali
+
+Not surprisingly, price increases with number of rooms.  However, it's interesting to see that the increase seems to be faster than linear: prices really jump after 4 or 5 rooms.  But, that may just mean that we've moved into a group of really nice houses, whereas the 1-4 locali houses are a mix of fancy and not so fancy. 
+
+```{r, fig = TRUE}
+ggplot(d, aes(x = locali, y = prezzo)) +
+    geom_point() + geom_smooth()
+```
+
+```{r, fig = TRUE}
+ggplot(d, aes(x = locali, y = prezzo, group = locali)) +
+    geom_boxplot()
+```
+
+### Superficie
+
+```{r, fig = TRUE}
+ggplot(d, aes(x = superficie, y = prezzo)) +
+    geom_point() + geom_smooth()
+```
+
+```{r, fig = TRUE}
+ggplot(d, aes(x = superficie, y = prezzo / superficie)) +
+    geom_point() + geom_smooth()
+```
+
+### Bagni
+
+```{r, fig = TRUE}
+ggplot(d, aes(x = bagni, y = prezzo)) +
+    geom_point()
+```
+
+```{r, fig = TRUE}
+ggplot(d, aes(x = bagni, y = prezzo, group = bagni)) +
+    geom_boxplot()
+```
+
+### Piano
+
+### Zona
+
+```{r, fig = TRUE}
+d[, zonaCnt := .N, by = zona]
+cutoff = sort(unique(d$zonaCnt), decreasing = TRUE)[maxToPlot]
+ggplot(d[zonaCnt >= cutoff, ], aes(x = substr(zona, 1, 30), y = prezzo,
+                                   group = zona)) +
+    geom_boxplot() + theme(axis.text.x = element_text(angle = 90))
+d[, zonaCnt := NULL]
+```
+
+### Quartiere
+
+```{r, fig = TRUE}
+d[, quartiereCnt := .N, by = quartiere]
+cutoff = sort(unique(d$quartiereCnt), decreasing = TRUE)[maxToPlot]
+ggplot(d[quartiereCnt >= cutoff, ], aes(x = quartiere, y = prezzo, group = quartiere)) +
+    geom_boxplot() + theme(axis.text.x = element_text(angle = 90))
+d[, quartiereCnt := NULL]
+```
+
+
+### CAP
+
+```{r, fig = TRUE}
+d[, capCnt := .N, by = CAP]
+cutoff = sort(unique(d$capCnt), decreasing = TRUE)[maxToPlot]
+ggplot(d[capCnt >= cutoff, ], aes(x = CAP, y = prezzo, group = CAP)) +
+    geom_boxplot() + theme(axis.text.x = element_text(angle = 90))
+d[, capCnt := NULL]
+```
+
+## Results of Model
+
+- Prediction
+- Residuals (look for trends)
+- Best and worst deals
+
+## Time series
+
+- Average price over time: ggplot with many curves
+- Average price over time: spatially with many images to capture time component
+- One spatial plot indicating the percent change in house prices over some time period by region.
+
+Partition data by
+- CAP
+- Zona
+- Quartiere
+
+## Simple spatial plots
+
+- Price density
+- Number of houses in region
+- Number and/or quality of services in region
+- Covariates (average superficie, average numeri di bagni/locali, ...)
