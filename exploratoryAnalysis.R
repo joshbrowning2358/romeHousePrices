@@ -1,19 +1,28 @@
 library(data.table)
 library(ggplot2)
+library(scales)
 library(glmnet)
 library(sqldf)
 library(reshape2)
+library(romeHousePrices)
 
-load("~/GitHub/romeHousePrices/Data/detail_Mio_2015.09.23.06.45.02.RData")
+assignDirectory()
+
+load(paste0(savingDir, "/detail_Mio_2015.10.05.06.28.32_cleaned.RData"))
+finalData = d
 
 # finalData = finalData[(Aria.condizionata), ]
 finalData[, roundSuper := round(superficie/25) * 25]
-ggplot(finalData, aes(x = prezzio, fill = factor(roundSuper))) + geom_bar()
-ggplot(finalData, aes(x = prezzio, fill = factor(roundSuper))) + geom_bar() +
-    xlim(c(0,2001))
-ggplot(finalData, aes(x = prezzio, fill = factor(roundSuper))) +
+ggplot(finalData, aes(x = prezzo, fill = factor(roundSuper))) +
     geom_bar(position = "fill") +
-    xlim(c(0,2001))
+    xlim(c(0,3001)) + labs(y = "", fill = "superficio") +
+    scale_y_continuous(labels = percent)
+
+finalData[, roundSuper := round(prezzo/superficie/5)*5]
+ggplot(finalData, aes(x = prezzo, fill = factor(roundSuper))) +
+    geom_bar(position = "fill") +
+    xlim(c(0,3001)) + labs(y = "", fill = "prezzo/metro quadrato") +
+    scale_y_continuous(labels = percent)
 
 # finalData = finalData[!(agency), ]
 # finalData = finalData[zona %in% c("ardeatino, colombo, garbatella",
@@ -21,14 +30,10 @@ ggplot(finalData, aes(x = prezzio, fill = factor(roundSuper))) +
 #                                   "trastevere, aventino, testaccio"), ]
 # finalData = finalData[locali > 3, ]
 
-ggplot(finalData, aes(x = prezzio, fill = factor(roundSuper))) + geom_bar()
-ggplot(finalData, aes(x = prezzio, fill = factor(roundSuper))) + geom_bar() +
-    xlim(c(0,2001))
-
 p = ggmap::get_map(location=c(12.5, 41.91), zoom=12)
 p = ggmap::ggmap(p)
 p + geom_point(data = finalData, aes(x = longitude, y = latitude,
-                                   color = prezzio), size = 4) +
+                                   color = prezzo), size = 4) +
     scale_color_continuous(trans = "log10")
 load("~/GitHub/romeHousePrices/Data/metroData.RData")
 p + geom_point(data = finalData, aes(x = longitude, y = latitude,

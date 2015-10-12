@@ -34,6 +34,10 @@ pullNewAddresses = function(){
             d[, CAP := NA_character_]
         }
         indices = which(!is.na(d$indirizzio) & is.na(d$longitude))
+        if(length(indices) == 0){
+            i = i + 1
+            next
+        }
         newAddresses = as.character(d$indirizzio[indices])
         newAddresses = gsub(", roma", "", newAddresses)
         newAddresses = data.table(
@@ -45,6 +49,7 @@ pullNewAddresses = function(){
             CAP = NA_character_, index = indices)
         newAddresses[, street := gsub(", *$", "", street)]
         newAddresses[, number := as.numeric(number)]
+        newAddresses = cleanAddressFile(newAddresses, deleteRows = FALSE)
         
         ## Update new addresses with any already on file
         newAddresses = merge(newAddresses, addressFile,
@@ -59,11 +64,15 @@ pullNewAddresses = function(){
         d[fromFile$index, CAP := fromFile$CAP]
         newAddresses = newAddresses[is.na(latitude), ]
         newAddresses = newAddresses[!is.na(street), ]
+        newAddresses = newAddresses[street != "NA", ]
         
         ## Look up missing addresses
-        if(nrow(newAddresses) > codesRemaining){
-            newAddresses = newAddresses[1:codesRemaining, ]
+        newAddresses[, firstObs := 1:nrow(.SD) == 1, by = c("street", "number")]
+        newAddresses[, cumUnique := cumsum(firstObs)]
+        if(max(newAddresses$cumUnique) > codesRemaining){
+            newAddresses = newAddresses[cumUnique <= codesRemaining, ]
         }
+        newAddresses[, c("firstObs", "cumUnique") := NULL]
         ## Force latitude/longitude to NA real instead of NA logical so that we
         ## don't have type problems with data.table.
         newAddresses[, c("latitude", "longitude") := rep(NA_real_, .N)]
@@ -84,6 +93,8 @@ pullNewAddresses = function(){
         newAddresses[, index := NULL]
         if(nrow(newAddresses) > 0){
             addressFile = rbind(addressFile, unique(newAddresses))
+            addressFile = addressFile[!is.na(latitude), ]
+            addressFile = cleanAddressFile(addressFile, deleteRows = TRUE)
         }
         ## Store on github to allow versioning and better conflict resolution
         ## (github works with .csv)
@@ -92,5 +103,7 @@ pullNewAddresses = function(){
         
         codesRemaining = geocodeQueryCheck(userType = "free")
         i = i + 1
+        if(codesRemaining > 0 & i > length(datasets))
+            i = 1
     }
 }

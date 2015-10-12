@@ -55,6 +55,10 @@ for(i in 1:length(listingPages)){
 finalData = rbindlist(d, fill = TRUE)
 write.csv(finalData, file = paste0(savingDir, "/detail_ImbAff_", time, ".csv"),
           row.names = FALSE)
+finalData = read.csv(paste0(savingDir, "/detail_ImbAff_", time, ".csv"))
+finalData = data.table(finalData)
+d = cleanImb(finalData)
+save(d, file = paste0(savingDir, "/detail_ImbAff_", time, ".csv"))
 
 
 ## Big sample, Mio Affitto
@@ -153,15 +157,6 @@ for(file in mioFiles){
     d = read.csv(paste0(savingDir, file))
     d = data.table(d)
     d = cleanMioAffitto(d)
-    save(d, file = paste0(savingDir, gsub(".csv", "_cleaned.RData", file)))
-}
-
-imbFiles = dataFiles[grepl("^detail_Imb.*.csv", dataFiles)]
-imbFiles = imbFiles[!grepl("cleaned", imbFiles)]
-for(file in imbFiles){
-    d = read.csv(paste0(savingDir, file))
-    d = data.table(d)
-    d = cleanImb(d)
     save(d, file = paste0(savingDir, gsub(".csv", "_cleaned.RData", file)))
 }
 
