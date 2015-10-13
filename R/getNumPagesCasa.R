@@ -8,8 +8,8 @@
 ##' @export
 ##' 
 
-getNumPagesCasa = function(){
-  url = "http://www.casa.it/vendita-residenziale/in-roma%2c+rm%2c+lazio/lista-1?preferredState=laz"
+getNumPagesCasa = function(url){
+  #url = "http://www.casa.it/vendita-residenziale/in-roma%2c+rm%2c+lazio/lista-1?preferredState=laz"
   html = read_html(url)
   cast = html_nodes(html, ".resultsInfo p")
   cast <- html_text(cast[[1]])
