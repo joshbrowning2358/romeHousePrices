@@ -96,9 +96,18 @@ start = Sys.time()
 
 urls <- getCasaMainPages(type = "vendita")
 
-listingPages = getPropertyUrlsCasa(numPages = 1)
+property.pages <- c()
+for(i in 1:length(urls)){
+  property.pages.temp <- getPropertyUrlsCasa(url = urls[i])
+  property.pages <- append(property.pages,property.pages.temp)
+}
+
 listing.time <- Sys.time() - start
 listing.time
+
+# listingPages = getPropertyUrlsCasa(numPages = 1)
+# 
+# listing.time
 
 d = list()
 for(i in 1:length(listingPages)){
