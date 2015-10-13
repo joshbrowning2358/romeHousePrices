@@ -1,9 +1,7 @@
 library(romeHousePrices)
-library(neuralnet)
-library(nnet)
-library(randomForest)
-library(rpart)
-library(e1071)
+library(adehabitatHR)
+library(maptools)
+
 assignDirectory()
 
 address = fread(paste0(workingDir, "/Data/addressDatabase.csv"))
@@ -16,33 +14,28 @@ p = ggmap::ggmap(p)
 p + geom_point(data = address, aes(x = longitude, y = latitude,
                                    color = factor(CAP)))
 
-model = neuralnet(CAP ~ latitude + longitude, hidden = c(20, 3),
-                  data = address)
-model = nnet(x = address[, c("latitude", "longitude"), with = FALSE],
-             y = factor(address[, CAP]), size = 20)
-model = randomForest(x = address[, c("latitude", "longitude"), with = FALSE],
-                     y = factor(address[, CAP]), mtry = 2, ntree = 10000) 
-model = rpart(CAP ~ latitude + longitude, data = address,
-              control = rpart.control(minsplit = 1, cp = .000001))
-model = svm(x = address[, c("latitude", "longitude"), with = FALSE],
-            y = factor(address[, CAP]), kernel = "radial")
-mean(predict(model, type = "class") == address[, CAP])
-table(predict(model, type = "class"), address[, CAP])
-
-
-res = 100
-grid = expand.grid(latitude  = seq(41.87, 41.89, length.out = res),
-                   longitude = seq(12.495, 12.525, length.out = res))
-grid$CAP = predict(model, newdata = grid)
-
-p = ggmap::get_map(location=c(12.50866, 41.88001), zoom=15)
+p = ggmap::get_map(location=c(12.5, 41.91), zoom=14)
 p = ggmap::ggmap(p)
-p + geom_tile(data = grid, aes(x = longitude, y = latitude,
-                               color = CAP == "00183"), alpha = .3) +
-    geom_point(data = address, aes(x = longitude, y = latitude,
-                                   color = CAP == "00183"), size = 2)
+p + geom_point(data = address, aes(x = longitude, y = latitude,
+                                   color = factor(CAP)))
 
 p = ggmap::get_map(location=c(12.50866, 41.88001), zoom=15)
 p = ggmap::ggmap(p)
 p + geom_point(data = address, aes(x = longitude, y = latitude,
                                    color = CAP == "00183"), size = 4)
+
+
+## Estimate region with minimum convex polygon
+capPoints = address[CAP == "00183", ]
+coordinates(capPoints) = c("longitude", "latitude")
+region = mcp(xy = capPoints[, "CAP"], percent = 100)
+plot(region)
+inPolygon = mapply(point.in.polygon, point.x = address[, longitude],
+                   point.y = address[, latitude],
+                   pol.x = region@polygons[[1]]@Polygons[[1]]@coords[, "longitude"],
+                   pol.y = region@polygons[[1]]@Polygons[[1]]@coords[, "latitude"])
+table(inPolygon)
+## Should have more interior points...
+name = paste0(savingDir, "/CAP/shapefile_", "00183")
+writeOGR(obj = region, dsn = "shapefile_00183.kml", layer = "shapefile_00183",
+         driver = "KML")
