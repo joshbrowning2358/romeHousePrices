@@ -67,7 +67,6 @@ getCasaMainPages <- function(type = "vendita"){
   }
   
   base.urls <- build(house.range)
-
-base.urls    
+  base.urls <- gsub(" ","",base.urls)   
 
 }
