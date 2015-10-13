@@ -3,10 +3,7 @@
 ##' This function gets the urls for each of the detailed, property listing 
 ##' pages.
 ##' 
-##' @param numPages The number of pages which should be loaded (and 15 urls are 
-##'   generally scraped per page).
-##' @param type A character string, either "vendita" or "affitto", indicating
-##'   which type of urls should be scraped.
+##' @param url is the starting url of the properties to be scraped
 ##'   
 ##' @return A character vector containing the urls for all the individual 
 ##'   listings.
@@ -21,40 +18,55 @@
 
 # library(rvest)
 
-getPropertyUrlsCasa = function(numPages, type = "vendita"){
+getPropertyUrlsCasa = function(url){
   
   
   ## Data Quality Checks
-  stopifnot(is.numeric(numPages))
-  stopifnot(type %in% c("vendita", "affitto"))
+#   stopifnot(is.numeric(numPages))
+#   stopifnot(type %in% c("vendita", "affitto"))
   
-  if(type == "vendita"){
-    base = "http://www.casa.it/vendita-residenziale/in-roma%2c+rm%2c+lazio/lista-"
-  } else if(type == "affitto"){
-    base =  "http://www.casa.it/affitti-residenziale/in-roma%2c+rm%2c+lazio/lista-"
-  } else {
-    stop("Current type not yet implemented!")
-  }
+#   if(type == "vendita"){
+#     base = "http://www.casa.it/vendita-residenziale/in-roma%2c+rm%2c+lazio/lista-"
+#   } else if(type == "affitto"){
+#     base =  "http://www.casa.it/affitti-residenziale/in-roma%2c+rm%2c+lazio/lista-"
+#   } else {
+#     stop("Current type not yet implemented!")
+#   }
+#   
   
+  url = paste0(url,1)
+  
+  mainHtml = read_html(url)
+  numPages = getNumPagesCasa(url)
+  
+  stopifnot(numPages < 201)
   
   listingPages = c()
   errors = 0
-  totalPages = getNumPagesCasa()
-  if(numPages > totalPages){
-    warning("Only ", totalPages, " pages available!  numPages has been ",
-            "adjusted down.")
-    numPages = totalPages
-  }
+  totalPages = numPages
+#   if(numPages > totalPages){
+#     warning("Only ", totalPages, " pages available!  numPages has been ",
+#             "adjusted down.")
+#     numPages = totalPages
+#   }
 
   for(i in 1:numPages){
     fail = try({
-    ## Make sure i is never in scientific notation
-    url = paste0(base, formatC(i, format = "f", digits = 0),"?preferredState=laz")
-    mainHtml <- read_html(url)
+      
+      #if first iteration, don't change url from base, otherwise put i
+      if(i == 1){
+        url.temp = url
+      } else {
+        url.temp = paste0(substr(url, 1, nchar(url)-1),i)
+      }
+      ## Make sure i is never in scientific notation
+    #url = paste0(base, formatC(i, format = "f", digits = 0))
+    mainHtml <- read_html(url.temp)
     newPages = html_nodes(mainHtml, ".name")
     newPages = sapply(newPages, html_attr, name = "href")
-    newPages = paste0("http://www.casa.it/",newPages)
+    newPages = paste0("http://www.casa.it",newPages)
     listingPages = c(newPages,listingPages)
+    #print(i)
     })
     if(is(fail,"try-error"))
       errors = errors +1
