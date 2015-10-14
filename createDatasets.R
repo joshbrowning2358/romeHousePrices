@@ -39,6 +39,10 @@ for(i in 1:length(listingPages)){
 finalData = rbindlist(d, fill = TRUE)
 write.csv(finalData, file = paste0(savingDir, "/detail_ImbVend_", time, ".csv"),
           row.names = FALSE)
+finalData = read.csv(paste0(savingDir, "/detail_ImbVend_", time, ".csv"))
+finalData = data.table(finalData)
+d = cleanImb(finalData)
+save(d, file = paste0(savingDir, "/detail_ImbVend_", time, "_cleaned.RData"))
 
 ## Big sample, Immobiliare Affitto
 listingPages = getPropertyUrlsImmobiliare(numPages = 100000, type = "affitto")
@@ -58,7 +62,7 @@ write.csv(finalData, file = paste0(savingDir, "/detail_ImbAff_", time, ".csv"),
 finalData = read.csv(paste0(savingDir, "/detail_ImbAff_", time, ".csv"))
 finalData = data.table(finalData)
 d = cleanImb(finalData)
-save(d, file = paste0(savingDir, "/detail_ImbAff_", time, ".csv"))
+save(d, file = paste0(savingDir, "/detail_ImbAff_", time, "_cleaned.RData"))
 
 
 ## Big sample, Mio Affitto
@@ -75,16 +79,13 @@ for(i in 1:length(listingPages)){
 }
 finalData = rbindlist(d, fill = TRUE)
 Sys.time() - start
-# finalData[, c("longitude", "latitude") := rep(NA_real_, .N)]
-# addresses = lapply(finalData$indirizzio, addressToCoord, source = "google")
-# addresses = do.call(rbind, addresses)
-# finalData[, longitude := addresses$Longitude]
-# finalData[, latitude := addresses$Latitude]
-Sys.time() - start
 nrow(finalData)
 write.csv(finalData, file = paste0(savingDir, "/detail_Mio_", time, ".csv"),
           row.names = FALSE)
-
+finalData = read.csv(paste0(savingDir, "/detail_Mio_", time, ".csv"))
+finalData = data.table(finalData)
+d = cleanImb(finalData)
+save(d, file = paste0(savingDir, "/detail_Mio_", time, "_cleaned.RData"))
 
 
 
