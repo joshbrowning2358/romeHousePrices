@@ -26,16 +26,48 @@ p + geom_point(data = address, aes(x = longitude, y = latitude,
 
 
 ## Estimate region with minimum convex polygon
-capPoints = address[CAP == "00183", ]
+currentCAP = "00181"
+center = address[CAP == currentCAP, c(mean(longitude), mean(latitude))]
+p = ggmap::get_map(location=center, zoom=14)
+p = ggmap::ggmap(p)
+p + geom_point(data = address, aes(x = longitude, y = latitude,
+                                   color = CAP == currentCAP), size = 4)
+
+capPoints = address[CAP == currentCAP, ]
 coordinates(capPoints) = c("longitude", "latitude")
 region = mcp(xy = capPoints[, "CAP"], percent = 100)
 plot(region)
 inPolygon = mapply(point.in.polygon, point.x = address[, longitude],
                    point.y = address[, latitude],
-                   pol.x = region@polygons[[1]]@Polygons[[1]]@coords[, "longitude"],
-                   pol.y = region@polygons[[1]]@Polygons[[1]]@coords[, "latitude"])
+                   MoreArgs = list(
+                        pol.x = region@polygons[[1]]@Polygons[[1]]@coords[, "longitude"],
+                        pol.y = region@polygons[[1]]@Polygons[[1]]@coords[, "latitude"]))
 table(inPolygon)
-## Should have more interior points...
-name = paste0(savingDir, "/CAP/shapefile_", "00183")
-writeOGR(obj = region, dsn = "shapefile_00183.kml", layer = "shapefile_00183",
-         driver = "KML")
+dim(capPoints)
+badPoints = address[inPolygon > 0 & CAP != currentCAP, ]
+
+
+capPoints = address[CAP == currentCAP, c("latitude", "longitude"), with = FALSE]
+capPoints = unique(capPoints)
+hull = capPoints[, alphahull::ahull(x = longitude, y = latitude, alpha = 0.01)]
+plot(hull)
+polygon = data.frame(hull$arcs[, c("c1", "c2")])
+coordinates(polygon) = c("c1", "c2")
+polygon = Polygon(coords = polygon)
+polygon = Polygons(list(polygon), 1)
+polygon = SpatialPolygons(list(polygon))
+plot(polygon)
+inPolygon = mapply(point.in.polygon, point.x = address[, longitude],
+                   point.y = address[, latitude],
+                   MoreArgs = list(
+                        pol.x = region@polygons[[1]]@Polygons[[1]]@coords[, "longitude"],
+                        pol.y = region@polygons[[1]]@Polygons[[1]]@coords[, "latitude"]))
+table(inPolygon)
+dim(capPoints)
+badPoints = address[inPolygon > 0 & CAP != currentCAP, ]
+
+
+stop("Need to correct for points inside CAP that shouldn't be!")
+name = paste0("shapefile_", currentCAP)
+setwd(paste0(savingDir, "/CAP/"))
+writeOGR(obj = region, dsn = paste0(name, ".kml"), layer = name, driver = "KML")
