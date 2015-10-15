@@ -2,6 +2,7 @@
 
 export(addressToCoord)
 export(assignDirectory)
+export(cleanAddressFile)
 export(cleanImb)
 export(cleanMioAffitto)
 export(getAgenzieDetailsImmobiliare)

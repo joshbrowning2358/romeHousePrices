@@ -10,6 +10,9 @@
 ##'   
 ##' @return A data.table with the same structure as what was passed, but 
 ##'   possibly modified to clean up names or delete duplicate rows.
+##' 
+##' @export
+##' 
 
 cleanAddressFile = function(d, deleteRows = TRUE){
     d[, street := gsub("\\s$", "", street)]

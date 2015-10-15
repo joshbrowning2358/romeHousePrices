@@ -4,7 +4,7 @@
 \alias{cleanAddressFile}
 \title{Clean Address file}
 \usage{
-cleanAddressFile(d, deleteRows)
+cleanAddressFile(d, deleteRows = TRUE)
 }
 \arguments{
 \item{d}{The data.table containing the data of interest.}
