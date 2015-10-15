@@ -11,7 +11,7 @@
 ##' @return A data.table with the same structure as what was passed, but 
 ##'   possibly modified to clean up names or delete duplicate rows.
 
-cleanAddressFile = function(d, deleteRows){
+cleanAddressFile = function(d, deleteRows = TRUE){
     d[, street := gsub("\\s$", "", street)]
     d[!grep("(di roma|de roma)", street),
       street := gsub(" roma$", "", street)]
