@@ -51,8 +51,28 @@ capPoints = address[CAP == currentCAP, c("latitude", "longitude"), with = FALSE]
 capPoints = unique(capPoints)
 hull = capPoints[, alphahull::ahull(x = longitude, y = latitude, alpha = 0.01)]
 plot(hull)
-polygon = data.frame(hull$arcs[, c("c1", "c2")])
-coordinates(polygon) = c("c1", "c2")
+# polygon = data.frame(hull$arcs[, c("c1", "c2")])
+polygon = data.frame(hull$ashape.obj$edges)
+## Reorder the polygon.  Index corresponds to the point index, and the edges are
+## written arbitrarily (i.e. not counterclockwise or following any particular 
+## order).  Also, two edges can start at the same point (i.e. ind1 doesn't have
+## to be the first index in clockwise order).
+newPolygon = polygon
+for(i in 1:(nrow(polygon)-1)){
+    index1 = polygon$ind1 == newPolygon[i, "ind2"] &
+        polygon$ind2 != newPolygon[i, "ind1"]
+    index2 = polygon$ind2 == newPolygon[i, "ind2"] &
+        polygon$ind1 != newPolygon[i, "ind1"]
+    if(any(index1)){
+        newPolygon[i+1, ] = polygon[index1, ]
+    } else {
+        newPolygon[i+1, ] = polygon[index2, c("ind2", "ind1", "x2", "y2", "x1",
+                                              "y1", "mx2", "my2", "mx1", "my1",
+                                              "bp2", "bp1")]
+    }
+}
+polygon = newPolygon
+coordinates(polygon) = c("x1", "y2")
 polygon = Polygon(coords = polygon)
 polygon = Polygons(list(polygon), 1)
 polygon = SpatialPolygons(list(polygon))

@@ -4,7 +4,7 @@
 \alias{getNumPagesCasa}
 \title{Get Number of Pages for Casa.it}
 \usage{
-getNumPagesCasa()
+getNumPagesCasa(url)
 }
 \value{
 An integer giving the number of pages.

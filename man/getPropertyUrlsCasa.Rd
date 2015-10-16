@@ -4,14 +4,10 @@
 \alias{getPropertyUrlsCasa}
 \title{Get Property urls for Casa.IT in Rome}
 \usage{
-getPropertyUrlsCasa(numPages, type = "vendita")
+getPropertyUrlsCasa(url)
 }
 \arguments{
-\item{numPages}{The number of pages which should be loaded (and 15 urls are
-generally scraped per page).}
-
-\item{type}{A character string, either "vendita" or "affitto", indicating
-  which type of urls should be scraped.}
+\item{url}{is the starting url of the properties to be scraped}
 }
 \value{
 A character vector containing the urls for all the individual
