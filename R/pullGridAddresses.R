@@ -16,7 +16,7 @@
 ##' 
 
 pullGridAddresses = function(width = runif(1, 0, .1), resolution = 50,
-                             shift = c(runif(1,-.02,.02), runif(1,-.02,.02))){
+                             shift = runif(2,-.02,.02)){
     assignDirectory()
     
     ## Data Quality checks
@@ -64,12 +64,7 @@ pullGridAddresses = function(width = runif(1, 0, .1), resolution = 50,
     grid$number = sapply(elements, function(x){
         if(length(x) < 3)
             return(NA)
-        out = x[2]
-        if(grepl("-", out)){
-            range = as.numeric(strsplit(out, "-")[[1]])
-            out = sample(range[1]:range[2], size = 1)
-        }
-        return(as.numeric(out))
+        x[2]
     })
     grid$city = sapply(elements, function(x){
         gsub("[0-9]* ", "", x[length(x)])
@@ -81,6 +76,22 @@ pullGridAddresses = function(width = runif(1, 0, .1), resolution = 50,
     })
     grid$longitude = grid$long
     grid$latitude = grid$lat
+    
+    ## Update rows with multiple numbers
+    toBind = grid[grepl("-", grid$number), ]
+    numberVec = lapply(toBind$number, function(x){
+        eval(parse(text = gsub("-", ":", x)))
+    })
+    nameVec = mapply(rep, x = rownames(toBind),
+                     times = sapply(numberVec, length))
+    if(is(nameVec, "list")){
+        nameVec = do.call("c", nameVec)
+    }
+    toBind = toBind[nameVec, ]
+    toBind[, "number"] = do.call("c", numberVec)
+    grid = grid[!grepl("-", grid$number), ]
+    grid = rbind(grid, toBind)
+    
     grid = grid[, colnames(addressFile)]
     addressFile = rbind(addressFile, grid)
     addressFile = cleanAddressFile(addressFile)
