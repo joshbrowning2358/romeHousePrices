@@ -5,7 +5,7 @@
 \title{Pull Grid Addresses}
 \usage{
 pullGridAddresses(width = runif(1, 0, 0.1), resolution = 50,
-  shift = c(runif(1, -0.02, 0.02), runif(1, -0.02, 0.02)))
+  shift = runif(2, -0.02, 0.02))
 }
 \arguments{
 \item{width}{The width of the window around Rome}
