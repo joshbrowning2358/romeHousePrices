@@ -28,6 +28,10 @@ getPropertyDetailsCasa = function(url){
     ##########################
     #indirizzo
     indirizzo = html_nodes(htmlCode,".titlecontact , h1")
+    
+    if(grepl("expired",as.character(indirizzo))){
+      indirizzo = "EXPIRED" 
+    } else {
     indirizzo = html_text(indirizzo)
     test = grepl(" in ",indirizzo)
       
@@ -40,7 +44,8 @@ getPropertyDetailsCasa = function(url){
         } else {
           print(paste0("Error"," ",url, "Not readable"))
         }
-    
+    }
+##################WORK ON ADDRESS AND EXPIRED CONSIDER LISTINGPAGES[233] AND http://www.casa.it/immobile-appartamento-rm-roma-27611312    
     #zona
     zona = html_nodes(htmlCode, "#listing_info .zone")
     zona = html_text(zona)
@@ -57,6 +62,8 @@ getPropertyDetailsCasa = function(url){
     
     #price
     prezzo = html_nodes(htmlCode, ".price")
+    test <- grepl("<li class",prezzo)
+    prezzo = prezzo[test]
     prezzo = html_text(prezzo)
     
     #############################

@@ -39,7 +39,6 @@ getPropertyUrlsCasa = function(url){
   mainHtml = read_html(url)
   numPages = getNumPagesCasa(url)
   
-  stopifnot(numPages < 201)
   
   listingPages = c()
   errors = 0
@@ -50,6 +49,12 @@ getPropertyUrlsCasa = function(url){
 #     numPages = totalPages
 #   }
 
+  if(numPages > 201){
+    print(paste0("Number of pages =",numPages,". adjusting to 201 for ",url))
+    numPages = 201
+  }
+  
+  
   for(i in 1:numPages){
     fail = try({
       

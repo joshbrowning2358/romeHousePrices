@@ -91,25 +91,29 @@ save(d, file = paste0(savingDir, "/detail_Mio_", time, "_cleaned.RData"))
 
 
 
-
-## Big sample, Casa Vendita
+#####################################
+## Big sample, Casa Vendita         #
+#####################################
+## LISTING
 start = Sys.time()
 
 urls <- getCasaMainPages(type = "vendita")
 
-property.pages <- c()
+listingPages <- c()
 for(i in 1:length(urls)){
   property.pages.temp <- getPropertyUrlsCasa(url = urls[i])
-  property.pages <- append(property.pages,property.pages.temp)
+  listingPages <- append(listingPages,property.pages.temp)
 }
 
 listing.time <- Sys.time() - start
-listing.time
+
 
 # listingPages = getPropertyUrlsCasa(numPages = 1)
 # 
 # listing.time
 
+##HARVESTING all - EXPIRED ADDRESSES MARKED "EXPIRED"
+start.harvest <- Sys.time()
 d = list()
 for(i in 1:length(listingPages)){
   ## Save data in chunks to avoid memory issues
@@ -130,8 +134,11 @@ for(i in 1:length(listingPages)){
 #print(i)  
 }
 
-harvesting.time <- Sys.time() - start
-harvesting.time
+
+harvesting.time = Sys.time() - start.harvest
+
+print(paste0("harvesting time was for ", harvesting.time))
+
 
 ## Paste all .csv files together
 
