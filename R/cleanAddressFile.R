@@ -23,5 +23,8 @@ cleanAddressFile = function(d, deleteRows = TRUE){
         d = d[(firstOccurence), ]
         d[, firstOccurence := NULL]
     }
+    ## Strange error occurred which put a ton of quotes on the end of an
+    ## address...  Strip them off
+    d[, street := gsub('"', "", street, fixed = TRUE)]
     return(d)
 }
