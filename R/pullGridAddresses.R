@@ -15,7 +15,7 @@
 ##' @export
 ##' 
 
-pullGridAddresses = function(width = runif(1, 0, .1), resolution = 50,
+pullGridAddresses = function(width = runif(1, 0, .1), resolution = 10,
                              shift = runif(2,-.02,.02)){
     assignDirectory()
     cat("Using the following parameters:",
