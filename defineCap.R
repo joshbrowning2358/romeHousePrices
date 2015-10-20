@@ -15,13 +15,12 @@ for(currentCAP in unique(address$CAP)){
     p = ggmap::get_map(location=center, zoom=14)
     p = ggmap::ggmap(p)
     
-    pointsInHull = 1
+    continue = TRUE
     alpha = 1
-    while(pointsInHull > 0){
+    while(continue){
         capPoints = address[CAP == currentCAP, c("latitude", "longitude"), with = FALSE]
         capPoints = unique(capPoints)
         hull = capPoints[, alphahull::ahull(x = longitude, y = latitude, alpha = alpha)]
-        plot(hull)
         # polygon = data.frame(hull$arcs[, c("c1", "c2")])
         polygon = data.frame(hull$ashape.obj$edges)
         ## Reorder the polygon.  Index corresponds to the point index, and the edges are
@@ -48,10 +47,10 @@ for(currentCAP in unique(address$CAP)){
         polygon = Polygons(list(polygon), 1)
         polygon = SpatialPolygons(list(polygon))
         coords = data.frame(polygon@polygons[[1]]@Polygons[[1]]@coords)
-        print(p + geom_point(data = address, aes(x = longitude, y = latitude,
-                                           color = CAP == currentCAP)) +
-            geom_path(data = coords, aes(x = X1, y = X2))
-        )
+#         print(p + geom_point(data = address, aes(x = longitude, y = latitude,
+#                                            color = CAP == currentCAP)) +
+#             geom_path(data = coords, aes(x = X1, y = X2))
+#         )
     
         inPolygon = mapply(point.in.polygon, point.x = address[, longitude],
                            point.y = address[, latitude],
@@ -60,12 +59,28 @@ for(currentCAP in unique(address$CAP)){
                                 pol.y = polygon@polygons[[1]]@Polygons[[1]]@coords[, 2]))
         badPoints = address[inPolygon > 0 & CAP != currentCAP, ]
         pointsInHull = nrow(badPoints)
-        cat("With alpha =", alpha, "we have", pointsInHull, "bad points")
+        cat("With alpha =", alpha, "we have", pointsInHull, "bad points\n")
         alpha = alpha / 2
-        readline("Next?")
+        
+        ## Stopping criteria:
+        continue = pointsInHull > 0
+        if(pointsInHull / nrow(capPoints) < .02 & alpha <= 0.01){
+            continue = FALSE
+        }
+        
+#        readline("Next?")
     }
     
     name = paste0("shapefile_", currentCAP)
     setwd(paste0(savingDir, "/CAP/"))
-    writeOGR(obj = region, dsn = paste0(name, ".kml"), layer = name, driver = "KML")
+    polygon = SpatialPolygonsDataFrame(polygon, data = data.frame(CAP = currentCAP))
+    if(!file.exists(paste0(name, ".kml"))){
+        rgdal::writeOGR(obj = polygon, dsn = paste0(name, ".kml"), layer = name,
+                        driver = "KML")
+    }
+    name = "allCAPs"
+    rgdal::writeOGR(obj = polygon, dsn = paste0(name, ".kml"), layer = name,
+                    driver = "KML", overwrite_layer = TRUE)
 }
+
+write.csv(file = paste0(savingDir, "allCaps.csv"), address[, unique(CAP)], row.names = FALSE)

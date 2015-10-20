@@ -18,6 +18,7 @@ cleanAddressFile = function(d, deleteRows = TRUE){
     d[, street := gsub("\\s$", "", street)]
     d[!grep("(di roma|de roma)", street),
       street := gsub(" roma$", "", street)]
+    d[, CAP := gsub("-", "", CAP)]
     if(deleteRows){
         d[, firstOccurence := (1:.N) == 1, by = c("street", "number", "city")]
         d = d[(firstOccurence), ]
@@ -26,5 +27,6 @@ cleanAddressFile = function(d, deleteRows = TRUE){
     ## Strange error occurred which put a ton of quotes on the end of an
     ## address...  Strip them off
     d[, street := gsub('"', "", street, fixed = TRUE)]
+    d = d[CAP != "Roma", ]
     return(d)
 }
