@@ -34,6 +34,7 @@ pullNewAddresses = function(){
         if(!"CAP" %in% colnames(d)){
             d[, CAP := NA_character_]
         }
+        d[indirizzio == "NA", indirizzio := NA_character_]
         indices = which(!is.na(d$indirizzio) & is.na(d$longitude))
         if(length(indices) == 0){
             i = i + 1
@@ -108,48 +109,5 @@ pullNewAddresses = function(){
         
         codesRemaining = geocodeQueryCheck(userType = "free")
         i = i + 1
-        if(codesRemaining > 0 & i > length(datasets))
-            i = 1
-    }
-    
-    ## If geocodes still remain, make up some addresses using the currently
-    ## available streets
-    if(codesRemaining > 0){
-        cat("More codes remain for today, adding random addresses.\n")
-        
-        ## Get the max number for each address so we can sample from 1:max
-        toSample = addressFile[, max(number, na.rm = TRUE),
-                               by = c("street", "city")]
-        setnames(toSample, "V1", "maxNumber")
-        toSample = toSample[maxNumber > -Inf, ]
-        toSample = toSample[sample(nrow(toSample), size = codesRemaining,
-                                   replace = TRUE), ]
-        ## Don't pick maxNumber since we already have that address
-        toSample[, number := sapply(maxNumber-1, sample, size = 1)]
-        toSample[, maxNumber := NULL]
-        setcolorder(toSample, c("street", "number", "city"))
-        
-        ## Look up addresses
-        fullAddress = toSample[, paste(street, ifelse(is.na(number), "", number), city)]
-        suppressMessages({suppressWarnings({
-            coords = lapply(fullAddress, addressToCoord, source = "google")
-        })})
-        coords = do.call(rbind, coords)
-        stopifnot(nrow(coords) == nrow(toSample))
-        toSample[, latitude := coords$latitude]
-        toSample[, longitude := coords$longitude]
-        toSample[, CAP := as.character(coords$CAP)]
-        
-        ## Add newly found addresses back to address database
-        if(nrow(toSample) > 0){
-            addressFile = rbind(addressFile, unique(toSample))
-            addressFile = addressFile[!is.na(latitude), ]
-            addressFile = cleanAddressFile(addressFile, deleteRows = TRUE)
-        }
-        ## Store on github to allow versioning and better conflict resolution
-        ## (github works with .csv)
-        write.csv(addressFile, file = paste0(workingDir, "/Data/addressDatabase.csv"),
-                  row.names = FALSE)
-
     }
 }

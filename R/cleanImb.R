@@ -11,7 +11,10 @@
 ##'
 
 # library(data.table)
-# data = read.csv("~/../Dropbox/romeHouseData/Data/detail_ImbVend_2015.10.04.08.49.53.csv",
+# data = read.csv("~/../Dropbox/romeHouseData/Data/detail_ImbVend_2015.10.05.05.28.53.csv",
+#                 stringsAsFactors = FALSE)
+# data = data.table(data)
+# data = read.csv("~/../Dropbox/romeHouseData/Data/detail_ImbAff_2015.10.20.12.38.31.csv",
 #                 stringsAsFactors = FALSE)
 # data = data.table(data)
 

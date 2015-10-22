@@ -2,26 +2,24 @@ library(shiny)
 library(data.table)
 library(ggplot2)
 library(ggmap)
+library(romeHousePrices)
+library(ggvis)
 
-if(Sys.info()[4] == "joshua-Ubuntu-Linux"){
-    dir = "~/Documents/Github/romeHousePrices/"
-} else {
-    dir = "~/GitHub/romeHousePrices/"
-}
+assignDirectory()
 
 # Use this to initizialize parameters for testing
 # input = list(minObs = 10)
 # getData = function(){
 #     load(paste0(dir, "/Data/", mioFile))
 #     mioData = copy(finalData)
-#     mioData[prezzio < 20, prezzio := prezzio * 1000]
+#     mioData[prezzo < 20, prezzo := prezzo * 1000]
 #     mioData
 # }
 
 shinyServer(function(input, output, session) {
 
     ########################## DATA GENERATION ##########################    
-    dataFiles = list.files(paste0(dir, "/Data"))
+    dataFiles = list.files(savingDir)
     mioFiles = dataFiles[grepl("^detail_Mio.*.RData", dataFiles)]
     mioDates = as.POSIXct(gsub("[^0-9]", "", mioFiles), format = "%Y%m%d%H%M%S")
     mioFile = mioFiles[mioDates == max(mioDates)]
@@ -29,11 +27,22 @@ shinyServer(function(input, output, session) {
     imbDates = as.POSIXct(gsub("[^0-9]", "", imbFiles), format = "%Y%m%d%H%M%S")
     imbFile = imbFiles[imbDates == max(imbDates)]
     getData = reactive({
-        load(paste0(dir, "/Data/", mioFile))
-        mioData = copy(finalData)
-        mioData = mioData[prezzio >= input$price[1] &
-                          prezzio <= input$price[2], ]
+        load(paste0(savingDir, mioFile))
+        mioData = copy(d)
+        mioData = mioData[prezzo >= input$price[1] &
+                          prezzo <= input$price[2], ]
+        if(length(input$CAPfilter) >= 1){
+            mioData = mioData[CAP %in% input$CAPfilter, ]
+        }
         mioData
+    })
+    getTSData = reactive({
+        tsData = fread(paste0(savingDir,
+                "/historical/data_by_cap/scraped_data/allHistoricalData.csv"),
+                colClasses = c("character", "character", "numeric", "date"))
+        if(length(input$CAPfilter) >= 1){
+            tsData = tsData[CAP %in% input$CAPfilter, ]
+        }
     })
 
     ########################## PLOT OUTPUTS ##########################
@@ -45,7 +54,7 @@ shinyServer(function(input, output, session) {
     output$zonaPlot = renderPlot({
         mioData = getData()[, zonaConta := .N, by = zona]
         ggplot(mioData[zonaConta > input$minObs, ],
-               aes(x = zona, y = prezzio)) +
+               aes(x = zona, y = prezzo)) +
             geom_boxplot() + 
             myTheme
     })
@@ -53,7 +62,7 @@ shinyServer(function(input, output, session) {
     output$quartierePlot = renderPlot({
         mioData = getData()[, quartiereConta := .N, by = quartiere]
         ggplot(mioData[quartiereConta > input$minObs, ],
-               aes(x = quartiere, y = prezzio)) +
+               aes(x = quartiere, y = prezzo)) +
             geom_boxplot() +
             myTheme
     })
@@ -62,13 +71,13 @@ shinyServer(function(input, output, session) {
         p = get_map(location=c(12.5, 41.91), zoom=12)
         p = ggmap(p)
         p + geom_point(data = getData(), aes(x = longitude, y = latitude,
-                                           color = prezzio))
+                                           color = prezzo))
     })
     
     output$superficiePlot = renderPlot({
         mioData = getData()
         mioData[, superficieLevel := round(superficie/25)*25]
-        p = ggplot(mioData, aes(x = prezzio, fill = as.factor(superficieLevel))) +
+        p = ggplot(mioData, aes(x = prezzo, fill = as.factor(superficieLevel))) +
             myTheme
         if(input$fillBox){
             p = p + geom_bar(position = "fill")
@@ -76,6 +85,17 @@ shinyServer(function(input, output, session) {
             p = p + geom_bar()
         }
         p
+    })
+    
+    output$historyTS = renderPlot({
+        tsData = getTSData()
+        tsSumm = tsData[, list(price = mean(price)), by = c("cap", "date")]
+        tsSumm %>% ggvis(~date, ~price) %>%
+            group_by(cap) %>%
+            layer_lines()
+        ggplot(tsSumm, aes(x = date, y = price)) +
+            geom_line(aes(group = cap), alpha = .2) +
+            scale_y_log10()
     })
     
     ########################## TABLE OUTPUTS ##########################

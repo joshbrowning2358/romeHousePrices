@@ -23,6 +23,12 @@ ui <- dashboardPage(
                      checkboxInput(inputId = "fillBox",
                                    label = "Fill Box Plot?",
                                    value = TRUE)
+            ),
+            tabPanel(title = "Area filter",
+                     selectInput(inputId = "CAPfilter",
+                                 label = "CAP Filter",
+                                 choices = fread(paste0(savingDir, "allCaps.csv"))$x,
+                                 multiple = TRUE)
             )
         ),
         tabBox(title = "Plots",
