@@ -27,6 +27,6 @@ cleanAddressFile = function(d, deleteRows = TRUE){
     ## Strange error occurred which put a ton of quotes on the end of an
     ## address...  Strip them off
     d[, street := gsub('"', "", street, fixed = TRUE)]
-    d = d[CAP != "Roma", ]
+    d = d[CAP != "Roma" | (is.na(CAP) & is.na(latitude)), ]
     return(d)
 }

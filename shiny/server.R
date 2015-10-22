@@ -3,6 +3,7 @@ library(data.table)
 library(ggplot2)
 library(ggmap)
 library(romeHousePrices)
+library(ggvis)
 
 assignDirectory()
 
@@ -36,7 +37,12 @@ shinyServer(function(input, output, session) {
         mioData
     })
     getTSData = reactive({
-        newDir = paste0(savingDir, "/historical/data_by_cap/scraped_data/")
+        tsData = fread(paste0(savingDir,
+                "/historical/data_by_cap/scraped_data/allHistoricalData.csv"),
+                colClasses = c("character", "character", "numeric", "date"))
+        if(length(input$CAPfilter) >= 1){
+            tsData = tsData[CAP %in% input$CAPfilter, ]
+        }
     })
 
     ########################## PLOT OUTPUTS ##########################
@@ -79,6 +85,17 @@ shinyServer(function(input, output, session) {
             p = p + geom_bar()
         }
         p
+    })
+    
+    output$historyTS = renderPlot({
+        tsData = getTSData()
+        tsSumm = tsData[, list(price = mean(price)), by = c("cap", "date")]
+        tsSumm %>% ggvis(~date, ~price) %>%
+            group_by(cap) %>%
+            layer_lines()
+        ggplot(tsSumm, aes(x = date, y = price)) +
+            geom_line(aes(group = cap), alpha = .2) +
+            scale_y_log10()
     })
     
     ########################## TABLE OUTPUTS ##########################

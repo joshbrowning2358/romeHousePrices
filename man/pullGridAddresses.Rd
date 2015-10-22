@@ -4,7 +4,7 @@
 \alias{pullGridAddresses}
 \title{Pull Grid Addresses}
 \usage{
-pullGridAddresses(width = runif(1, 0, 0.1), resolution = 50,
+pullGridAddresses(width = runif(1, 0, 0.1), resolution = 10,
   shift = runif(2, -0.02, 0.02))
 }
 \arguments{

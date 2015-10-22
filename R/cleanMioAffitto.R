@@ -83,6 +83,31 @@ cleanMioAffitto = function(data){
         data[, c(name) := ifelse(is.na(get(name)), FALSE,
                           ifelse(get(name) == "TRUE", TRUE, FALSE))]
     }
+    
+    ## Standardize variables
+    data[, Posto.auto.incluso := ifelse(Posto.auto.incluso, "auto", "no")]
+    data[, Plaza.de.parking.opcional := NULL]
+    data[, X := NULL]
+    
+    ## Standardize names
+    setnames(data, c("indirizzio", "description", "pictureCount", "agency",
+                     "Aria.condizionata", "Ripostiglio.incluso",
+                     "Posto.auto.incluso", "Accesso.per.disabili", "Attivazione.utenze",
+                     "Sedie.e.tavoli", "Utensili.da.cucina", "Zona.infantile",
+                     "Animali.permessi", "Accesso.a.internet", "Certificato.energetico"),
+                   c("indirizzo", "descrizione", "fotoConte", "agencia",
+                     "ariaCondizionata", "ripostiglio",
+                     "box", "accessoDisabili", "attivazioneUtenze",
+                     "sedieTavoli", "utensiliCucina", "zonaInfantile",
+                     "animaliPermessi", "accessoInternet", "certificatoEnergetico")
+                   )
+    camelCaseName = sapply(colnames(data), function(x){
+        characters = strsplit(x, "")
+        characters[[1]][1] = tolower(characters[[1]][1])
+        return(paste0(characters[[1]], collapse = ""))
+    })
+    setnames(data, camelCaseName)
+    setnames(data, "tV", "TV")
 
     return(data)
 }
