@@ -32,7 +32,9 @@ cleanMioAffitto = function(data){
               quartiere := NA]
     data[grepl(":", quartiere), quartiere := NA]
     data[, quartiere := gsub("/.*", "", quartiere)]
+    data[, description := as.character(description)]
     data[, pictureCount := as.numeric(pictureCount)]
+    data[, url := as.character(url)]
     setnames(data, grep("^Antichit", colnames(data), value = TRUE), "Antichita")
     data[, Antichita := gsub("^Pi.*", "Piu di 30 anni", Antichita)]
     ## May be slightly off here if more than one == "TRUE.  But, that's really

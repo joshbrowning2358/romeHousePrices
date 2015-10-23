@@ -18,7 +18,7 @@ assignDirectory = function(){
     } else if(Sys.info()[4] == "joshua-Ubuntu-Linux"){
         workingDir <<- "~/Documents/Github/romeHousePrices"
         savingDir <<- "~/Dropbox/romeHouseData/Data/"
-    } else if(Sys.info()[4] =="Michaels-MacBook-Pro-2.local"||
+    } else if(Sys.info()[4] =="Michaels-MacBook-Pro-2.local" |
               Sys.info()[4] == "Michaels-MBP-2.lan"){
         workingDir <<- "~/Dropbox/romeHousePrices/" 
         savingDir <<- "~/DropBox/romeHouseData/Data/" #for michael's mac yo
