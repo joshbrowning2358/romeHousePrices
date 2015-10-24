@@ -85,7 +85,7 @@ harvest.time
 ## Create master dataset ##
 ##  for vendita         ##
 ###########################
-mioFiles = list.files(savingDir, pattern = "ImbCasa")
+mioFiles = list.files(savingDir, pattern = "VenditaCasa")
 
 master <- read.csv(paste0(savingDir,mioFiles[1]),stringsAsFactors = FALSE)
 
@@ -104,7 +104,9 @@ for(i in 2:length(mioFiles)){
   print(i)
 }
 
-###################
+save(master, file = paste0(savingDir,"Vend_Casa_",time,".Rdta"))
+
+##################
 ##    Affitto   ## 
 ###################
 

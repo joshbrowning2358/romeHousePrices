@@ -19,21 +19,26 @@ if(Sys.info()[4] == "JOSH_LAPTOP"){
 }
 
 
-dataFiles = list.files(savingDir, pattern = ".csv")
-mioFiles = dataFiles[grepl("^detail_ImbCasa.*.csv", dataFiles)]
+dataFiles = list.files(savingDir, pattern = ".Rdta")
+mioFiles = dataFiles[grepl("^Vend_Casa", dataFiles)]
 
-d <- read.csv(paste0(savingDir,mioFiles[5]),stringsAsFactors = FALSE)
-nrow(d)
-ncol(d)
-colnames(d)
-sapply(d,class)
+load(paste0(savingDir,mioFiles))
+d <- as.data.frame(master)
 
-#explore indirizzo
-head(d[,1])
-tail(d[,1])
+#########################
+##   GENERAL CLEANING  ##
+#########################
 
-length(unique(d[,1]))
-sum(d[,1] == "Roma")
+# REMOVE DUPLICATES
+d <- unique(d)
+
+#clean column names
+colnames(d) <- gsub("[^a-zA-Z0-9]","",colnames(d))
+
+#randomly sample some rows:
+# set.seed(1)
+# samp <- sample(1:nrow(master),100)
+# d <- d[samp,]
 
 #####################
 ## clean addresses ##
@@ -51,3 +56,57 @@ d$cap <- gsub("-.*","",d$cap)
 test.cap <- grepl("[0-9]{5}",d$cap)
 d$cap[!test.cap] <- "NA"
 
+##############################
+##    ZONA                  ##
+## *FIND WAY TO SOLVE NA    ##
+##############################
+blank <- d$zona == ""
+d$zona[blank] = "NA"
+
+# tab <-  d %>% group_by(zona) %>% summarize(num=length(indirizzo))
+# tab$share = tab$num/nrow(d)
+# tab$share <- round(tab$share, digits = 3)
+# tab
+
+############################
+##      CLEAN PRICE       ##
+############################
+d$prezzo  <- gsub("^[€]","",d$prezzo)
+d$prezzo <- gsub("[€] .*","",d$prezzo)
+d$prezzo <- gsub("^ ","",d$prezzo)
+d$prezzo <- gsub(" $","",d$prezzo)
+d$prezzo <- gsub("[^a-zA-Z0-9]","",d$prezzo)
+
+#change price withheld to NA
+d$prezzo <- as.numeric(d$prezzo)
+
+
+############################
+##        CATEGORIA       ##
+############################
+#OK
+
+############################
+##      TIPOLOGIA         ##
+############################
+# tab <- d %>% group_by(Tipologia) %>% summarize(n())
+# tab
+
+
+###########################
+##      BAGNI            ##
+###########################
+tab <- d %>% group_by(Bagni) %>% summarize(n())
+
+test <- filter(d, Bagni > 10)
+head(test)
+test2 <- select(test,url,Bagni)
+
+###########################################################
+colnames(d)[1] <- "indirizzio"
+d <- data.table(d)
+save(d,file = paste0(savingDir,"Data","Vend_Casa",Sys.Date(),"cleaned.RData"))
+
+
+pullNewAddresses()
+load(paste0(savingDir,"Data","Vend_Casa",Sys.Date(),"cleaned.RData"))
