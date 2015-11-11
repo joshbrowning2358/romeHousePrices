@@ -95,18 +95,67 @@ d$prezzo <- as.numeric(d$prezzo)
 
 ###########################
 ##      BAGNI            ##
+#*filter bagni for reasonable number, or use bagni x sq. meter for model?
 ###########################
 tab <- d %>% group_by(Bagni) %>% summarize(n())
 
 test <- filter(d, Bagni > 10)
 head(test)
-test2 <- select(test,url,Bagni)
+test2 <- select(test,url,Bagni, tipologia)
 
+##########################
+## LOCALI               ##
+##########################
+# tab <- d %>% group_by(Locali) %>% summarize(n())
+# data.frame(tab)
 ###########################################################
+
+
+###########################
+## PIANO                 ##
+###########################
+terra = grepl("terra",d$Piano)
+d$Piano[terra] <- 0
+#tab <- d %>% group_by(Piano) %>% summarize(n())
+
+###########################
+##    STATO AL ROGITO    ##
+###########################
+#OK
+
+##########################
+##    CONDIZIONI        ##
+##########################
+#OK
+#unique(d$Condizioni)
+
+
+#########################
+##    METRIQUADRI      ##
+#########################
+d$Metriquadri <- gsub(" mq","",d$Metriquadri)
+gsub("\\.","",d$Metriquadri)
+
+
+unique(d$Metriquadri)
+quantile(d$Metriquadri, probs = seq(0,1,.05), na.rm = TRUE)
+colnames(d)
+
+
 colnames(d)[1] <- "indirizzio"
+
+
+
 d <- data.table(d)
-save(d,file = paste0(savingDir,"Data","Vend_Casa",Sys.Date(),"cleaned.RData"))
+save(d,file = paste0(savingDir,"Data","DataVend_Casa2015-10-24cleaneded.RData."))
 
-
+start.time = Sys.time()
 pullNewAddresses()
-load(paste0(savingDir,"Data","Vend_Casa",Sys.Date(),"cleaned.RData"))
+#load(paste0(savingDir,"Data","Vend_Casa",Sys.Date(),"cleaned.RData"))
+address.time = Sys.time() - start.time
+address.time
+pullGridAddresses()
+#x <- read.csv(paste0(list.files()[7],"/addressDatabase.csv"))
+# tartu_map <- get_map(location = "rome", maptype = "satellite", zoom = 12)
+# ggmap(tartu_map, extent = "device") + geom_point(aes(x = lon, y = lat), colour = "red", 
+#                                                  alpha = 0.1, size = 2, data = tartu_housing_xy_wgs84_a)
