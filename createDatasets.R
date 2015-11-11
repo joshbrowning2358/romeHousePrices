@@ -5,7 +5,7 @@ library(romeHousePrices)
 if(Sys.info()[4] == "JOSH_LAPTOP"){
     workingDir = "~/GitHub/romeHousePrices"
     savingDir = "~/../Dropbox/romeHouseData/"
-} else if(Sys.info()[4] == "joshuaUbuntuLinux"){
+} else if(Sys.info()[4] == "joshua-Ubuntu-Linux"){
     workingDir = "~/Documents/Github/romeHousePrices"
 } else if(Sys.info()[4] =="Michaels-MacBook-Pro-2.local"||
           Sys.info()[4] == "Michaels-MBP-2.lan"){
@@ -84,7 +84,7 @@ write.csv(finalData, file = paste0(savingDir, "/detail_Mio_", time, ".csv"),
           row.names = FALSE)
 finalData = read.csv(paste0(savingDir, "/detail_Mio_", time, ".csv"))
 finalData = data.table(finalData)
-d = cleanImb(finalData)
+d = cleanMioAffitto(finalData)
 save(d, file = paste0(savingDir, "/detail_Mio_", time, "_cleaned.RData"))
 
 
