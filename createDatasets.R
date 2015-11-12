@@ -165,16 +165,3 @@ for(i in 1:length(listingPages)){
   }
   #print(i)  
 }
-
-
-dataFiles = list.files(savingDir, pattern = ".csv")
-mioFiles = dataFiles[grepl("^detail_Mio.*.csv", dataFiles)]
-mioFiles = mioFiles[!grepl("cleaned", mioFiles)]
-for(file in mioFiles){
-    d = read.csv(paste0(savingDir, file))
-    d = data.table(d)
-    d = cleanMioAffitto(d)
-    save(d, file = paste0(savingDir, gsub(".csv", "_cleaned.RData", file)))
-}
-
-pullNewAddresses()
