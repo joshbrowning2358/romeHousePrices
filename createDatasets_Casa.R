@@ -16,7 +16,7 @@ library(romeHousePrices)
 if(Sys.info()[4] == "JOSH_LAPTOP"){
   workingDir = "~/GitHub/romeHousePrices"
   savingDir = "~/../Dropbox/romeHouseData/"
-} else if(Sys.info()[4] == "joshuaUbuntuLinux"){
+} else if(Sys.info()[4] == "joshua-Ubuntu-Linux"){
   workingDir = "~/Documents/Github/romeHousePrices"
 } else if(Sys.info()[4] =="Michaels-MacBook-Pro-2.local"|
           Sys.info()[4] == "Michaels-MBP-2.lan"){
