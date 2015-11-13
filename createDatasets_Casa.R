@@ -59,6 +59,7 @@ write.csv(listingPages,file = paste0(savingDir,"listing_CasaVend_",time,".csv"))
 ##HARVESTING
 start.harvest <- Sys.time()
 d = list()
+listingPages <- unique(listingPages)
 for(i in 1:length(listingPages)){
   ## Save data in chunks to avoid memory issues
   if(i %% 1000 == 0){
