@@ -15,6 +15,8 @@ if(Sys.info()[4] == "JOSH_LAPTOP"){
     stop("No directory for current user!")
 }
 
+setwd(workingDir)
+
 files = dir(path = paste0(workingDir, "/R"), full.names = TRUE)
 sapply(files, source)
 
@@ -86,82 +88,3 @@ finalData = read.csv(paste0(savingDir, "/detail_Mio_", time, ".csv"))
 finalData = data.table(finalData)
 d = cleanMioAffitto(finalData)
 save(d, file = paste0(savingDir, "/detail_Mio_", time, "_cleaned.RData"))
-
-
-
-
-
-#####################################
-## Big sample, Casa Vendita         #
-#####################################
-## LISTING
-start = Sys.time()
-
-urls <- getCasaMainPages(type = "vendita")
-
-listingPages <- c()
-for(i in 1:length(urls)){
-  property.pages.temp <- getPropertyUrlsCasa(url = urls[i])
-  listingPages <- append(listingPages,property.pages.temp)
-}
-
-listing.time <- Sys.time() - start
-
-
-# listingPages = getPropertyUrlsCasa(numPages = 1)
-# 
-# listing.time
-
-##HARVESTING all - EXPIRED ADDRESSES MARKED "EXPIRED"
-start.harvest <- Sys.time()
-d = list()
-for(i in 1:length(listingPages)){
-  ## Save data in chunks to avoid memory issues
-  if(i %% 1000 == 0){
-    d[[1000]] = getPropertyDetailsCasa(listingPages[[i]])
-    finalData = rbindlist(d, fill = TRUE)
-    print(paste0(i, "/", length(listingPages), " runs completed so far")) 
-    print(Sys.time() - start)
-    write.csv(finalData, file = paste0(savingDir, "/detail_ImbCasa_",
-                                       i, "_", time, ".csv"),
-              row.names = FALSE)
-    rm(d, finalData)
-    gc()
-    d = list()
-  } else {
-    d[[i %% 1000]] = getPropertyDetailsCasa(listingPages[[i]])
-  }
-#print(i)  
-}
-
-
-harvesting.time = Sys.time() - start.harvest
-
-print(paste0("harvesting time was for ", harvesting.time))
-
-
-## Paste all .csv files together
-
-## Big sample, Casa AFFITTO
-listingPages = getPropertyUrlsCasa(numPages = 1, type = "affitto")
-start = Sys.time()
-
-d = list()
-for(i in 1:length(listingPages)){
-  ## Save data in chunks to avoid memory issues
-  if(i %% 1000 == 0){
-    d[[1000]] = getPropertyDetailsCasa(listingPages[[i]])
-    finalData = rbindlist(d, fill = TRUE)
-    print(paste0(i, "/", length(listingPages), " runs completed so far")) 
-    print(Sys.time() - start)
-    write.csv(finalData, file = paste0(savingDir, "/detail_CasaAff_",
-                                       i, "_", time, ".csv"),
-              row.names = FALSE)
-    rm(d, finalData)
-    gc()
-    d = list()
-  } else {
-    d[[i %% 1000]] = getPropertyDetailsCasa(listingPages[[i]])
-  }
-  #print(i)  
-}
