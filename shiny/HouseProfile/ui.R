@@ -29,11 +29,33 @@ ui <- dashboardPage(
                                  label = "CAP",
                                  choices = fread(paste0(savingDir, "allCaps.csv"))$x,
                                  multiple = TRUE)
+            ),
+            tabPanel(title = "Plot Variables",
+                     selectInput(inputId = "xVar",
+                                 label = "Horizontal Variable",
+                                 choices = c("superficie", "prezzo",
+                                             "locali", "bagni")),
+                     selectInput(inputId = "yVar",
+                                 label = "Vertical Variable",
+                                 choices = c("prezzo", "superficie",
+                                             "locali", "bagni"))
             )
         ),
         tabBox(title = "Summaries",
             tabPanel(title = "Table",
                      tableOutput("tabSummary")
+            ),
+            tabPanel(title = "Horizontal Summary",
+                     plotOutput("horizontalPlot")
+            ),
+            tabPanel(title = "Vertical Summary",
+                     plotOutput("verticalPlot")
+            ),
+            tabPanel(title = "Scatterplot",
+                     plotOutput("scatterPlot")
+            ),
+            tabPanel(title = "Map",
+                     plotOutput("mapPlot")
             )
         )
     )

@@ -8,13 +8,10 @@ library(ggvis)
 assignDirectory()
 
 # Use this to initizialize parameters for testing
-# input = list(minObs = 10)
-# getData = function(){
-#     load(paste0(dir, "/Data/", mioFile))
-#     mioData = copy(finalData)
-#     mioData[prezzo < 20, prezzo := prezzo * 1000]
-#     mioData
-# }
+# input = list(minObs = 10, superficie = c(0, 500), bagni = c(0, 5),
+#              locali = c(0, 10), prezzo = c(0, 2000),
+#              capFilter = c("00145", "00186"), xVar = "superficie",
+#              yVar = "prezzo")
 
 shinyServer(function(input, output, session) {
 
@@ -47,16 +44,56 @@ shinyServer(function(input, output, session) {
         axis.text.x = element_text(angle = 90)
     )
     
-#     output$historyTS = renderPlot({
-#         tsData = getTSData()
-#         tsSumm = tsData[, list(price = mean(price)), by = c("cap", "date")]
-#         tsSumm %>% ggvis(~date, ~price) %>%
-#             group_by(cap) %>%
-#             layer_lines()
-#         ggplot(tsSumm, aes(x = date, y = price)) +
-#             geom_line(aes(group = cap), alpha = .2) +
-#             scale_y_log10()
-#     })
+    output$horizontalPlot = renderPlot({
+        data = getData()
+        out = ggplot(data, aes_string(x = "CAP", y = input$xVar)) +
+            geom_boxplot()
+        print(out)
+    })
+    
+    output$verticalPlot = renderPlot({
+        data = getData()
+        out = ggplot(data, aes_string(x = "CAP", y = input$yVar)) +
+            geom_boxplot()
+        print(out)
+    })
+    
+    output$scatterPlot = renderPlot({
+        data = getData()
+        makeEllipse = function(data, x, y){
+            coords = try(car::dataEllipse(x = data[[x]], y = data[[y]]))
+            if(is(coords, "try-error")){
+                out = data.frame(x = 1, y = 1)
+                out = out[-1, ]
+                return(out)
+            }
+            data.frame(coords[[2]])
+        }
+        capData = split(data, data$CAP)
+        ellipse = lapply(capData, makeEllipse, x = input$xVar, y = input$yVar)
+        ellipse = lapply(1:length(ellipse), function(i){
+            out = ellipse[[i]]
+            out$CAP = names(ellipse)[i]
+            out
+        })
+        ellipse = do.call("rbind", ellipse)
+        out = ggplot(data, aes_string(x = input$xVar, y = input$yVar)) +
+            geom_point(aes(color = CAP)) +
+            geom_polygon(data = ellipse, aes(x = x, y = y, fill = CAP),
+                         alpha = 0.1)
+        print(out)
+    })
+    
+    output$mapPlot = renderPlot({
+        ## This would be cool as a shaded region, but we'll need the shape files
+        ## for the CAPs first...  Also, we should allow the user to determine 
+        ## which variable to plot (price, superficie, ...).  It'd be really cool
+        ## to make it interactive as well: hover and it tells you
+        ## max/min/average/median...
+        data = getData()
+        out = ggplot(data, aes(x = longitude, y = latitude, color = prezzo)) +
+            geom_point()
+    })
     
     ########################## TABLE OUTPUTS ##########################
     output$tabSummary = renderTable({
@@ -65,7 +102,8 @@ shinyServer(function(input, output, session) {
             prezzo     = mean(prezzo, na.rm = TRUE),
             superficie = mean(superficie, na.rm = TRUE),
             locali     = mean(locali, na.rm = TRUE),
-            bagni      = mean(bagni, na.rm = TRUE)
+            bagni      = mean(bagni, na.rm = TRUE),
+            count      = .N
         ), by = CAP]
         out
     })
