@@ -86,7 +86,19 @@ cleanColumn = function(data, name, type, min, max, levels, description,
     } else if(type == "character"){
         
     } else if(type == "factor"){
-        stop("Still need to implement checking here!!!")
+        allowedLevels = strsplit(levels, split = " *, *")[[1]]
+        badLevels = data[!get(name) %in% allowedLevels, unique(get(name))]
+        if(length(badLevels) > 0 & response == "warn"){
+            warning("Invalid levels found for variable ", name, "!  Values ",
+                    paste(badLevels, collapse = ", "), " were detected.",
+                    sep = "")
+        } else if(length(badLevels) > 0 & response == "error"){
+            stop("Invalid levels found for variable ", name, "!  Values ",
+                 paste(badLevels, collapse = ", "), " were detected.",
+                 sep = "")
+        } else if(length(badLevels) > 0 & response == "correct"){
+            data[get(name) %in% badLevels, c(name) := NA]
+        }
     } else if(type == "logical"){
         
     } else if(type == "date"){
