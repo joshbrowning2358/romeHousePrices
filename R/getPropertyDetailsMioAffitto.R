@@ -40,8 +40,8 @@ getPropertyDetailsMioAffitto = function(url){
     bagni = gsub(".* ", "", bagni)
     mapDetails = html_text(html_nodes(htmlCode, "address"))
     mapDetails = gsub("^\n[ a-zA-Z:]*\n *", "", mapDetails)
-    pictureCount = html_node(htmlCode, ".detail-gallery-count")
-    if(is.null(pictureCount)){
+    pictureCount = try(html_node(htmlCode, ".detail-gallery-count"))
+    if(is.null(pictureCount) | is(pictureCount, "try-error")){
         pictureCount = 0
     } else {
         pictureCount = gsub("(\n| |1/)", "", html_text(pictureCount))

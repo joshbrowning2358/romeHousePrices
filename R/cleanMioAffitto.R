@@ -54,22 +54,25 @@ cleanMioAffitto = function(data){
                            ifelse(Orientamento.unica == "TRUE", 1, NA))))]
     data[, c("Orientamento.esposizione.su.tutti.i.lati", "Orientamento.tripla",
              "Orientamento.doppia", "Orientamento.unica") := NULL]
-    data[, Certificato.energetico := ifelse(Certificato.energetico.tipo.8 == "TRUE", "8",
-                                     ifelse(Certificato.energetico.tipo.7 == "TRUE", "7",
-                                     ifelse(Certificato.energetico.tipo.6 == "TRUE", "6",
-                                     ifelse(Certificato.energetico.tipo.5 == "TRUE", "5",
-                                     ifelse(Certificato.energetico.tipo.4 == "TRUE", "4",
-                                     ifelse(Certificato.energetico.tipo.3 == "TRUE", "3",
-                                     ifelse(Certificato.energetico.tipo.2 == "TRUE", "2",
-                                     ifelse(Certificato.energetico.tipo.1 == "TRUE", "1",
-                                     ifelse(Certificato.energetico.tipo.F == "TRUE", "F",
-                                     ifelse(Certificato.energetico.tipo.G == "TRUE", "G",
-                                            NA))))))))))]
-    data[, c("Certificato.energetico.tipo.8", "Certificato.energetico.tipo.7",
-           "Certificato.energetico.tipo.6", "Certificato.energetico.tipo.5",
-           "Certificato.energetico.tipo.4", "Certificato.energetico.tipo.3",
-           "Certificato.energetico.tipo.2", "Certificato.energetico.tipo.1",
-           "Certificato.energetico.tipo.F", "Certificato.energetico.tipo.G") := NULL]
+    ## Get all "certificato.energetico" columns
+    certificatoEnergetico = data[, grep("Certificato.energetico", colnames(data),
+                                        value = TRUE), with = FALSE]
+    class = gsub("Certificato.energetico.tipo.", "", colnames(certificatoEnergetico))
+    certificato.energetico = sapply(1:nrow(certificatoEnergetico), function(i){
+        filter = certificatoEnergetico[i, ] == TRUE
+        filter[is.na(filter)] = FALSE
+        if(sum(filter) == 0){
+            return(NA)
+        } else if(sum(filter) == 1){
+            return(class[filter])
+        } else {
+            warning("Multiple energy classes from one property!  ",
+                    "Returning 'first'.")
+            return(class[filter][1])
+        }
+    })
+    data[, grep("Certificato.energetico", colnames(data), value = TRUE) := NULL]
+    data[, Certificato.energetico := certificato.energetico]
     data[, Armadi := as.numeric(Armadi)]
     setnames(data, grep("^Plaza.de.*rking.opcional", colnames(data), value = TRUE),
              "Plaza.de.parking.opcional")
