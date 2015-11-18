@@ -1,5 +1,6 @@
 library(romeHousePrices)
 library(scales)
+library(caret)
 
 assignDirectory()
 
@@ -36,5 +37,34 @@ summary(fit)
 fit = lm(I(prezzo / superficie) ~ CAP, data = d)
 summary(fit) # explains 36% of variance
 fit = lm(I(prezzo / superficie) ~ 1, data = d)
-fit2 = step(object = fit, scope = I(prezzo / superficie) ~ .,
+fit2 = step(object = fit, scope = I(prezzo / superficie) ~ CAP + bagni + locali,
            direction = "both", data = d)
+
+d[, longitudeGroup := findInterval(longitude,
+                                   quantile(longitude, probs = 0:10/10))]
+d[, latitudeGroup := findInterval(latitude,
+                                   quantile(latitude, probs = 0:10/10))]
+ggplot(d, aes(x = latitude, y = prezzo / superficie,
+              group = longitudeGroup, color = longitudeGroup)) +
+    geom_smooth(se = FALSE)
+ggplot(d, aes(x = longitude, y = prezzo / superficie,
+              group = latitudeGroup, color = latitudeGroup)) +
+    geom_smooth(se = FALSE)
+
+
+d = d[!is.na(locali) & !is.na(bagni), ]
+d[, prezzoXsuperficie := prezzo / superficie]
+
+fitControl <- trainControl(## 10-fold CV
+                           method = "repeatedcv",
+                           number = 10,
+                           ## repeated ten times
+                           repeats = 10)
+fit.lm = train(prezzoXsuperficie ~ locali + bagni + zona + quartiere + CAP +
+          latitude + longitude, data = d[1:1000, ], method = "lm",
+          trControl = fitControl)
+fit.lm
+fit.gbm = train(prezzoXsuperficie ~ locali + bagni + zona + quartiere + CAP +
+          latitude + longitude, data = d[1:1000, ], method = "gbm",
+          trControl = fitControl)
+fit.gbm
