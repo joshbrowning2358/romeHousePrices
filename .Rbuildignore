@@ -1,6 +1,7 @@
 README.md
 .git
 Data
+Logs
 shiny
 ^.*\.Rproj$
 ^\.Rproj\.user$

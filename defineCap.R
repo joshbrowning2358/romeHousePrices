@@ -13,7 +13,7 @@ address = address[latitude >= 41.6 & latitude <= 42.2 &
 for(currentCAP in unique(address$CAP)){
     center = address[CAP == currentCAP, c(mean(longitude), mean(latitude))]
     p = ggmap::get_map(location=center, zoom=14)
-    p = ggmap::ggmap(p)
+    # p = ggmap::ggmap(p)
     
     continue = TRUE
     alpha = 1

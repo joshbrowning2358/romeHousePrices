@@ -60,11 +60,78 @@ fitControl <- trainControl(## 10-fold CV
                            number = 10,
                            ## repeated ten times
                            repeats = 10)
-fit.lm = train(prezzoXsuperficie ~ locali + bagni + zona + quartiere + CAP +
-          latitude + longitude, data = d[1:1000, ], method = "lm",
-          trControl = fitControl)
+
+method = c("lm", "gbm", "rf", "glmnet", "gam", "rpart")
+start = Sys.time()
+for(alg in method){
+    sink(paste0("~/GitHub/romeHousePrices/Logs/log_",
+         as.character(start, format = "%Y%m%d%H%M%S"), ".log"))
+    fit = try(train(prezzoXsuperficie ~ locali + bagni + zona + quartiere +
+                        CAP + latitude + longitude, data = d[1:1000, ],
+                    method = alg, trControl = fitControl))
+    sink()
+    if(!is(fit, "try-error")){
+        assign(paste0("fit.", alg), fit)
+        cat(alg, "model completed!")
+    } else {
+        cat(alg, "model failed!")
+    }
+    print(Sys.time() - start)
+    start = Sys.time()
+}
+
+
 fit.lm
-fit.gbm = train(prezzoXsuperficie ~ locali + bagni + zona + quartiere + CAP +
-          latitude + longitude, data = d[1:1000, ], method = "gbm",
-          trControl = fitControl)
+varImp(fit.lm)
 fit.gbm
+varImp(fit.gbm)
+fit.rpart
+varImp(fit.rpart)
+fit.glmnet
+varImp(fit.glmnet)
+fit.rf
+varImp(fit.rf)
+fit.gam
+
+save(fit.lm, fit.gbm, fit.rf, fit.glmnet, fit.rpart,
+     file = paste0(savingDir, "/../Models/cross_validation_10_n_1000.RData"))
+
+fitControl <- trainControl(## 5-fold CV
+                           method = "repeatedcv",
+                           number = 10,
+                           ## repeated one times
+                           repeats = 1)
+
+method = c("lm", "gbm", "rf", "glmnet", "gam", "rpart")
+start = Sys.time()
+for(alg in method){
+    sink(paste0("~/GitHub/romeHousePrices/Logs/log_",
+         as.character(start, format = "%Y%m%d%H%M%S"), ".log"))
+    fit = try(train(prezzoXsuperficie ~ locali + bagni + zona + quartiere +
+                        CAP + latitude + longitude, data = copy(d),
+                    method = alg, trControl = fitControl))
+    sink()
+    if(!is(fit, "try-error")){
+        assign(paste0("fit.", alg), fit)
+        cat(alg, "model completed!")
+    } else {
+        cat(alg, "model failed!")
+    }
+    print(Sys.time() - start)
+    start = Sys.time()
+}
+
+save(fit.lm, fit.gbm, fit.rf, fit.glmnet, fit.rpart,
+     file = paste0(savingDir, "/../Models/cross_validation_10_n_34111.RData"))
+
+fit.lm
+varImp(fit.lm)
+fit.gbm
+varImp(fit.gbm)
+fit.rpart
+varImp(fit.rpart)
+fit.glmnet
+varImp(fit.glmnet)
+fit.rf
+varImp(fit.rf)
+fit.gam
