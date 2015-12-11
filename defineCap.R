@@ -42,16 +42,22 @@ for(currentCAP in unique(address$CAP)){
             }
         }
         polygon = newPolygon
-        coordinates(polygon) = c("x1", "y1")
-        polygon = Polygon(coords = polygon)
-        polygon = Polygons(list(polygon), 1)
-        polygon = SpatialPolygons(list(polygon))
-        coords = data.frame(polygon@polygons[[1]]@Polygons[[1]]@coords)
+
+        print(ggplot(address, aes(x = longitude, y = latitude)) +
+                  geom_point(aes(color = CAP == currentCAP)) +
+                  geom_path(data = polygon, aes(x = x1, y = y1)) +
+                  xlim(center[1] + c(-.02, .02)) +
+                  ylim(center[2] + c(-.02, .02)))
 #         print(p + geom_point(data = address, aes(x = longitude, y = latitude,
 #                                            color = CAP == currentCAP)) +
 #             geom_path(data = coords, aes(x = X1, y = X2))
 #         )
     
+        coordinates(polygon) = c("x1", "y1")
+        polygon = Polygon(coords = polygon)
+        polygon = Polygons(list(polygon), 1)
+        polygon = SpatialPolygons(list(polygon))
+        coords = data.frame(polygon@polygons[[1]]@Polygons[[1]]@coords)
         inPolygon = mapply(point.in.polygon, point.x = address[, longitude],
                            point.y = address[, latitude],
                            MoreArgs = list(
