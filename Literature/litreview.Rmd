@@ -1,0 +1,13 @@
+---
+title: "Real Estate Literature Review"
+author: "Josh Browning"
+date: "December 7, 2015"
+output: pdf_document
+---
+
+- **The Dynamics of Location in Home Price**
+
+Full reference: Gelfand, A.E., M.D. Ecker, J.R. Knight and C.F. Sirmans. "The Dynamics of Location in Home Price." Journal of Real estate and Financial Economics 29 (2004): 149-166.
+
+This article discusses how one can fill missing data using the Gibb's sampler.  Real estate data can be particularly problematic when it comes to missing data problems, and this paper presents the Gibb's sampler as a potential solution to such problems.  For me, it was an interesting read as I've heard alot about the Gibb's sampler approach but never understood it well.
+
