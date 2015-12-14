@@ -46,8 +46,8 @@ for(currentCAP in unique(address$CAP)){
         print(ggplot(address, aes(x = longitude, y = latitude)) +
                   geom_point(aes(color = CAP == currentCAP)) +
                   geom_path(data = polygon, aes(x = x1, y = y1)) +
-                  xlim(center[1] + c(-.02, .02)) +
-                  ylim(center[2] + c(-.02, .02)))
+                  xlim(center[1] + c(-.005, .005)) +
+                  ylim(center[2] + c(-.005, .005)))
 #         print(p + geom_point(data = address, aes(x = longitude, y = latitude,
 #                                            color = CAP == currentCAP)) +
 #             geom_path(data = coords, aes(x = X1, y = X2))
@@ -90,3 +90,30 @@ for(currentCAP in unique(address$CAP)){
 }
 
 write.csv(file = paste0(savingDir, "allCaps.csv"), address[, unique(CAP)], row.names = FALSE)
+
+## Fix errors with different CAPs in the wrong CAP
+library(class)
+address = fread(paste0(workingDir, "/Data/addressDatabase.csv"))
+address = address[latitude >= 41.6 & latitude <= 42.2 &
+                  longitude >= 12.2 & longitude <= 12.8 &
+                  !is.na(CAP), ]
+n = nrow(address)
+d = address[1:n, .(latitude, longitude)]
+## Without adding some small random noise, we get an error about "too many ties
+## in distance".  To avoid that, add some small random noise.
+model = knn(train = d[, .(latitude + rnorm(n, sd = .000001),
+                          longitude + rnorm(n, sd = .000001))],
+            test = d, cl = address$CAP[1:n], k = 15, prob = TRUE)
+model = data.table(prediction = model, prob = attr(model, "prob"),
+                   true = address$CAP[1:n], index = 1:n)
+badPts = model[prediction != true, ][order(prob), ]
+address[badPts$index, c("newLongitude", "newLatitude") :=
+            geocode(paste0(street, ",", ifelse(is.na(number), "", number),
+                           "roma"), source = "google")]
+ggplot(address, aes(x = newLatitude, y = latitude)) + geom_point() + xlim(c(40,45))
+ggplot(address, aes(x = newLongitude, y = longitude)) + geom_point() + xlim(c(10,15))
+address[!is.na(newLatitude), latitude := newLatitude]
+address[!is.na(newLongitude), longitude := newLongitude]
+address[, c("newLongitude", "newLatitude") := NULL]
+write.csv(address, file = paste0(workingDir, "/Data/addressDatabase.csv"),
+          row.names = FALSE)
